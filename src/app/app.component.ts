@@ -11,6 +11,6 @@ export class AppComponent implements OnInit {
   
   constructor(private dataService: DataService){}
   ngOnInit() {
-    this.dataService.retrieveData();
+    this.dataService.getProcessedData().then(res => console.log(res));
   }
 }
