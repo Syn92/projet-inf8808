@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { IData, IDataMarketGlobal } from '../../assets/Interfaces';
+import { DataService } from '../data-service.service';
 
 @Component({
   selector: 'app-data-viz1',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DataViz1Component implements OnInit {
 
-  constructor() { }
+  private data: IData;
+  private global: IDataMarketGlobal[];
+
+  constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-  }
+    this.dataService.getProcessedData().then((res: IData) => {
+      this.data = res
+      this.global = res.global
 
+      console.log(this.global)
+    });
+  }
 }
