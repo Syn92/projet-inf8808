@@ -39,10 +39,21 @@ export class DataService {
 
     return {
       global: res[0],
-      volume: res[1],
-      btc: res[2],
+      volume: res[2],
+      btcPrice: this.formatDate(res[1].prices),
       btcDom: btcDom
     }
   }
+
+  private formatDate(data: any) {
+    const dates = [];
+    data.forEach(element => {
+      let d = new Date(element[0]);
+      dates.push([d, element[1]]);
+    });
+    
+    return dates
+  }
 }
+
 

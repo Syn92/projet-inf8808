@@ -6,11 +6,8 @@ import { DataService } from './data-service.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'Projet8808';
   
   constructor(private dataService: DataService){}
-  ngOnInit() {
-    this.dataService.getProcessedData().then(res => console.log(res));
-  }
 }
