@@ -13,6 +13,7 @@ export class DataViz3Component implements OnInit {
   private data: IData;
   private btcPrice: [];
   private svg;
+  private offset = 100;
   private margin = 50;
   private width = 1000 - (this.margin * 2);
   private height = 600 - (this.margin * 2);
@@ -44,9 +45,11 @@ export class DataViz3Component implements OnInit {
     .range([0, this.width])
     .nice();
     
-    const yScale = d3.scaleLinear()
-    .domain([0, 100000])
-    // .domain(d3.extent(this.data.global, d => (Number)(d.market_cap))) //s.data.global[this.data.global.length-1].market_cap))])
+    const maxY = d3.max(this.data.global.map(d => parseInt(d.market_cap)))
+    const minY = d3.min(this.data.btcPrice.map(d => parseInt(d[1])))
+
+    const yScale = d3.scaleLog()
+    .domain([minY-this.offset, maxY])
     .range([this.height, this.margin])
       
     this.svg.append('g')
