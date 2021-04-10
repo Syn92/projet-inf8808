@@ -30,18 +30,22 @@ export class DataService {
   public async getProcessedData(): Promise<Object> {
 
     const res = await this.retrieveDataTest()
-
-    const btcDom = res[1].market_caps.map((e, i) => {
-      const cap = e[1]/res[0][i].market_cap
-
-      return cap > 1 ? 1.0 : cap
-    })
+    
+    const btcDom = res[1].market_caps.reduce((result, e, i) => {
+      const temp = e[1]/res[0][i].market_cap
+      const cap = temp > 1 ? [e[0], 1.0] : [e[0], temp]
+      
+      if (cap[1] > 0)
+        result.push(cap)
+      
+      return result
+    }, [])
 
     return {
       global: res[0],
       volume: res[2],
       btcPrice: this.formatDate(res[1].prices),
-      btcDom: btcDom
+      btcDom: this.formatDate(btcDom)
     }
   }
 
