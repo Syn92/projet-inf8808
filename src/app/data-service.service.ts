@@ -32,8 +32,8 @@ export class DataService {
     const res = await this.retrieveDataTest()
     
     const btcDom = res[1].market_caps.reduce((result, e, i) => {
-      const temp = e[1]/res[0][i].market_cap
-      const cap = temp > 1 ? [e[0], 1.0] : [e[0], temp]
+      const temp = e[1]/res[0][i].market_cap * 100
+      const cap = temp > 100 ? [e[0], 100.0] : [e[0], temp]
       
       if (cap[1] > 0)
         result.push(cap)

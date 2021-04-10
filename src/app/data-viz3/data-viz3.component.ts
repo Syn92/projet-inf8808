@@ -13,7 +13,8 @@ export class DataViz3Component implements OnInit {
   private data: IData;
   private svg;
   private xScale;
-  private yScale;
+  private yScale1;
+  private yScale2;
   private offset = 100;
   private margin = 50;
   private width = 1000 - (this.margin * 2);
@@ -47,41 +48,57 @@ export class DataViz3Component implements OnInit {
   private setupAxies() {
     const date: Date[] = this.data.btcPrice.map(d => d[0])
 
+    // setup scales
+
     this.xScale = d3.scaleTime()
       .domain(d3.extent(date, d => d))
       .range([0, this.width])
       .nice();
       
-    const maxY = d3.max(this.data.global.map(d => parseInt(d.market_cap)))
-    const minY = d3.min(this.data.btcPrice.map(d => parseInt(d[1])))
+    const maxY1 = d3.max(this.data.global.map(d => parseInt(d.market_cap)))
+    const minY1 = d3.min(this.data.btcPrice.map(d => parseInt(d[1])))
   
-    this.yScale = d3.scaleLog()
-      .domain([minY-this.offset, maxY])
+    this.yScale1 = d3.scaleLog()
+      .domain([minY1-this.offset, maxY1])
       .range([this.height, this.margin])
+
+    const maxY2 = d3.max(this.data.btcDom.map(d => d[1]))
+
+    this.yScale2 = d3.scaleLinear()
+      .domain([0, maxY2])
+      .range([this.height, this.margin])
+
+    // Append axies to svg
 
     this.svg.append('g')
       .attr('transform', `translate(0, ${this.height})`)
       .attr('class', 'x axis')
+      .call(d3.axisBottom(this.xScale))
     
     this.svg.append('g')
-      .attr('class', 'y axis')
+      .attr('class', 'y axis1')
+      .call(d3.axisLeft(this.yScale1)
+        .tickFormat(y => {
+          return `${this.nFormatter(y, 0)}`
+        }))
+
+    this.svg.append('g')
+      .attr('transform', `translate(${this.width}, 0)`)
+      .attr('class', 'y axis2')
+      .call(d3.axisRight(this.yScale2)
+        .tickFormat(y => `${y}%`))
       
-    this.svg.select('.x.axis')
-      .call(d3.axisBottom(this.xScale))
-      
-    this.svg.select('.y.axis')
-      .call(d3.axisLeft(this.yScale))
   }
 
   private drawBTC() {
     this.svg.append('path')
       .datum(this.data.btcPrice)
       .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
+      .attr('stroke', 'limegreen')
       .attr('stroke-width', 1.5)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
-        .y(d => this.yScale(d[1]))
+        .y(d => this.yScale1(d[1]))
       )
   }
 
@@ -94,7 +111,26 @@ export class DataViz3Component implements OnInit {
       .attr('stroke-width', 1.5)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
-        .y(d => this.yScale(d[1] * 1000))
+        .y(d => this.yScale2(d[1]))
       )
+  }
+
+  // Formats number ex: 10000 => 10K
+  private nFormatter(num, digits) {
+    var si = [
+      { value: 1, symbol: "" },
+      { value: 1E3, symbol: "k" },
+      { value: 1E6, symbol: "M" },
+      { value: 1E9, symbol: "B" },
+      { value: 1E12, symbol: "T" }
+    ];
+    var regex = /\.0+$|(\.[0-9]*[1-9])0+$/;
+    var i;
+    for (i = si.length - 1; i > 0; i--) {
+      if (num >= si[i].value) {
+        break;
+      }
+    }
+    return (num / si[i].value).toFixed(digits).replace(regex, "$1") + si[i].symbol;
   }
 }
