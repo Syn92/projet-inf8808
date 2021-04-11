@@ -66,7 +66,7 @@ export class DataService {
     const dates = [];
     data.forEach((e: IDataMarketGlobal) => {
       let d = new Date(e.timestamp);
-      dates.push([d, e.market_cap])
+      dates.push([d, parseInt(e.market_cap)])
     });
     
     return dates

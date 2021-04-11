@@ -121,8 +121,16 @@ export class DataViz3Component implements OnInit {
   }
 
   private drawTotMC() {
-    // console.log(this.data.global)
-    // console.log(this.data.btcPrice)
+
+    this.svg.append('path')
+      .datum(this.data.global)
+      .attr('fill', 'none')
+      .attr('stroke', 'steelblue')
+      .attr('stroke-width', 1.5)
+      .attr('d', d3.line()
+        .x(d => this.xScale(d[0]))
+        .y(d => this.yScale1(d[1]))
+      )
   }
 
   // Formats number ex: 10000 => 10K
