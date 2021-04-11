@@ -11,6 +11,62 @@ export class DataService {
   constructor(private http: HttpClient) { 
   }
 
+  public async getProcessedDataViz1(): Promise<Object> {
+    const path = '/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false'
+    const coinList: any = await this.http.get(Constants.COIN_API + path, {params: Constants.PARAMS_BTC}).toPromise()    
+
+    const top2014 = ["bitcoin", "litecoin", "ripple", "peercoin", "omni", "nxt", "namecoin", "bitshares", "quark", "megacoin"];
+    const top2017 = ["bitcoin", "ethereum", "bitcoin-cash", "ripple", "litecoin", "cardano", "iota", "dash", "nem", "monero"];
+
+    const coinsWithMarketCap = {
+      '2014': {},
+      '2017': {},
+      '2021': {},
+    };
+
+    const dateA2014 = Math.round((new Date(2014, 0, 5, 0, 0, 0).getTime()/1000))
+    const dateB2014 = Math.round((new Date(2014, 0, 5, 23, 59, 59).getTime()/1000))
+    
+    
+    for (const id in top2014) {
+      const path1 = `/coins/${top2014[id]}/market_chart/range?vs_currency=usd&from=${dateA2014}&to=${dateB2014}`
+      const request: any = await this.http.get(Constants.COIN_API + path1, {params: Constants.PARAMS_BTC}).toPromise()
+      coinsWithMarketCap['2014'][`${top2014[id]}`] = request.market_caps[0][1]
+      coinsWithMarketCap['2014']['market_cap'] = request.market_caps[0][0]
+    }
+
+    const dateA2017 = Math.round((new Date(2017, 11, 17, 0, 0, 0).getTime()/1000))
+    const dateB2017 = Math.round((new Date(2017, 11, 17, 23, 59, 59).getTime()/1000))
+
+    for (const id in top2017) {
+      const path1 = `/coins/${top2017[id]}/market_chart/range?vs_currency=usd&from=${dateA2017}&to=${dateB2017}`
+      const request: any = await this.http.get(Constants.COIN_API + path1, {params: Constants.PARAMS_BTC}).toPromise()
+      coinsWithMarketCap['2017'][`${top2017[id]}`] = request.market_caps[0][1]
+      coinsWithMarketCap['2017']['market_cap'] = request.market_caps[0][0]
+    }
+    
+    const dateA2021 = Math.round((new Date().getTime()/1000 - 86460*2))
+    const dateB2021 = Math.round((new Date().getTime()/1000 - 86400))
+
+    for (const coin in coinList) {
+      const id = coinList[coin].id
+      const path1 = `/coins/${id}/market_chart/range?vs_currency=usd&from=${dateA2021}&to=${dateB2021}`
+      const request: any = await this.http.get(Constants.COIN_API + path1, {params: Constants.PARAMS_BTC}).toPromise()
+      coinsWithMarketCap['2021'][`${id}`] = request.market_caps[0][1]
+      coinsWithMarketCap['2021']['market_cap'] = request.market_caps[0][0]
+    }
+    
+    return coinsWithMarketCap;
+  }
+
+  // private getAverageCap(marketCaps: number[]): any {
+  //   let sum = 0
+  //   for( var i = 0; i < marketCaps.length; ++i ) {
+  //     sum += marketCaps[i][1]
+  //   }
+  //   return sum/marketCaps.length
+  // }
+
   private retrieveDataTest(): Promise<any> {
 
     let global = this.http.get(Constants.NOMICS_API + '/market-cap/history', {params: Constants.PARAMS_G})
@@ -23,7 +79,6 @@ export class DataService {
   public async getProcessedData(): Promise<Object> {
 
     const res = await this.retrieveDataTest()
-
     
     const global = this.formatDateString(res[0])
     const btcPrice = this.formatDateUnix(res[1].prices)
