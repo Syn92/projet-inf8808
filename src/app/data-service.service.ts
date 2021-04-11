@@ -27,7 +27,12 @@ export class DataService {
     
     const global = this.formatDateString(res[0])
     const btcPrice = this.formatDateUnix(res[1].prices)
-    const volume = res[2]
+    const volume = res[2].map(d => {
+      const date = new Date(d.timestamp)
+      const vol = parseInt(d.volume)
+
+      return [date, vol]
+    })
     const btcDom = []
     
     const globalMap = this.arrayToMap(global)

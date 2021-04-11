@@ -30,11 +30,13 @@ export class DataViz3Component implements OnInit {
   }
 
   private displayGraph() {
+    console.log(this.data)
     this.setupBaseGraph();
     this.setupAxies();
     this.drawBTC();
     this.drawBTCDom()
     this.drawTotMC()
+    this.drawVol()
   }
   
   private setupBaseGraph() {
@@ -99,7 +101,7 @@ export class DataViz3Component implements OnInit {
     this.svg.append('path')
       .datum(this.data.btcPrice)
       .attr('fill', 'none')
-      .attr('stroke', 'limegreen')
+      .attr('stroke', 'lime')
       .attr('stroke-width', 1.5)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
@@ -126,6 +128,19 @@ export class DataViz3Component implements OnInit {
       .datum(this.data.global)
       .attr('fill', 'none')
       .attr('stroke', 'steelblue')
+      .attr('stroke-width', 1.5)
+      .attr('d', d3.line()
+        .x(d => this.xScale(d[0]))
+        .y(d => this.yScale1(d[1]))
+      )
+  }
+
+  private drawVol() {
+
+    this.svg.append('path')
+      .datum(this.data.volume)
+      .attr('fill', 'none')
+      .attr('stroke', 'green')
       .attr('stroke-width', 1.5)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
