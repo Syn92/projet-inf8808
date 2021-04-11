@@ -23,4 +23,12 @@ export class Constants {
         }
     })
 
+    public static readonly PARAMS_BTC = new HttpParams({
+      fromObject: {
+        vs_currency: 'usd',
+        from: '1388552400',
+        to: '1617768000'
+      }
+    })
+
 }

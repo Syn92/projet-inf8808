@@ -34,6 +34,7 @@ export class DataViz3Component implements OnInit {
     this.setupAxies();
     this.drawBTC();
     this.drawBTCDom()
+    this.drawTotMC()
   }
   
   private setupBaseGraph() {
@@ -46,7 +47,11 @@ export class DataViz3Component implements OnInit {
   }
 
   private setupAxies() {
-    const date: Date[] = this.data.btcPrice.map(d => d[0])
+    const date: Date[] = []
+    
+    this.data.btcPrice.forEach(e => {
+      date.push(e[0])
+    })
 
     // setup scales
 
@@ -55,14 +60,14 @@ export class DataViz3Component implements OnInit {
       .range([0, this.width])
       .nice();
       
-    const maxY1 = d3.max(this.data.global.map(d => parseInt(d.market_cap)))
+    const maxY1 = d3.max(this.data.global.map(d => parseInt(d[1])))
     const minY1 = d3.min(this.data.btcPrice.map(d => parseInt(d[1])))
   
     this.yScale1 = d3.scaleLog()
       .domain([minY1-this.offset, maxY1])
       .range([this.height, this.margin])
 
-    const maxY2 = d3.max(this.data.btcDom.map(d => d[1]))
+    const maxY2 = d3.max(this.data.btcDom.map(d => parseInt(d[1])))
 
     this.yScale2 = d3.scaleLinear()
       .domain([0, maxY2])
@@ -113,6 +118,11 @@ export class DataViz3Component implements OnInit {
         .x(d => this.xScale(d[0]))
         .y(d => this.yScale2(d[1]))
       )
+  }
+
+  private drawTotMC() {
+    // console.log(this.data.global)
+    // console.log(this.data.btcPrice)
   }
 
   // Formats number ex: 10000 => 10K

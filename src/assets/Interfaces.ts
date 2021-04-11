@@ -10,9 +10,14 @@ export interface IDataVolume {
     derivative_volume: string,
 }
 
+export interface IMapValue {
+    timestamp: Date,
+    value
+}
+
 export interface IData {
     btcPrice: [],
-    btcDom: number[],
-    global: IDataMarketGlobal[],
-    volume: IDataVolume
+    btcDom: [],
+    global: [],
+    volume: IDataVolume[]
 }

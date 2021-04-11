@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { Constants } from '../assets/constants'
+import { IDataMarketGlobal } from 'src/assets/Interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -11,18 +12,10 @@ export class DataService {
   }
 
   private retrieveDataTest(): Promise<any> {
-    
-    let params_BTC = new HttpParams({
-      fromObject: {
-        vs_currency: 'usd',
-        days: '2654',
-        interval: 'daily'
-      }
-    })
 
     let global = this.http.get(Constants.NOMICS_API + '/market-cap/history', {params: Constants.PARAMS_G})
     let volume = this.http.get(Constants.NOMICS_API + '/volume/history', {params: Constants.PARAMS_V})
-    let btc    = this.http.get(Constants.COIN_API + '/coins/bitcoin/market_chart', {params: params_BTC})
+    let btc    = this.http.get(Constants.COIN_API + '/coins/bitcoin/market_chart/range', {params: Constants.PARAMS_BTC})
 
     return forkJoin([global, btc, volume]).toPromise()
   }
@@ -30,33 +23,66 @@ export class DataService {
   public async getProcessedData(): Promise<Object> {
 
     const res = await this.retrieveDataTest()
+
     
-    const btcDom = res[1].market_caps.reduce((result, e, i) => {
-      const temp = e[1]/res[0][i].market_cap * 100
-      const cap = temp > 100 ? [e[0], 100.0] : [e[0], temp]
+    const global = this.formatDateString(res[0])
+    const btcPrice = this.formatDateUnix(res[1].prices)
+    const volume = res[2]
+    const btcDom = []
+    
+    const globalMap = this.arrayToMap(global)
+    const btcMC = this.arrayToMap(this.formatDateUnix(res[1].market_caps))
+    
+
+    btcMC.forEach((val: any, key: any) => {
+      if (!globalMap.has(key))
+        return
+
+      const temp = val.value / globalMap.get(key).value * 100
+      const cap  = temp > 100 ? 100 : temp
       
-      if (cap[1] > 0)
-        result.push(cap)
-      
-      return result
-    }, [])
+      btcDom.push([val.timestamp, cap])
+    })
 
     return {
-      global: res[0],
-      volume: res[2],
-      btcPrice: this.formatDate(res[1].prices),
-      btcDom: this.formatDate(btcDom)
+      global: global,
+      volume: volume,
+      btcPrice: btcPrice,
+      btcDom: btcDom
     }
   }
 
-  private formatDate(data: any) {
+  private formatDateUnix(data: any) {
     const dates = [];
-    data.forEach(element => {
-      let d = new Date(element[0]);
-      dates.push([d, element[1]]);
+    data.forEach(e => {
+      let d = new Date(e[0]);
+      dates.push([d, e[1]])
     });
     
     return dates
+  }
+
+  private formatDateString(data: IDataMarketGlobal[]) {
+    const dates = [];
+    data.forEach((e: IDataMarketGlobal) => {
+      let d = new Date(e.timestamp);
+      dates.push([d, e.market_cap])
+    });
+    
+    return dates
+  }
+
+  private arrayToMap(arr) {
+    const map = new Map()
+
+    arr.forEach(e => {
+      map.set(e[0].toString(), {
+        timestamp: e[0],
+        value :e[1]
+      })
+    });
+
+    return map
   }
 }
 
