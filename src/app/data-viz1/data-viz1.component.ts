@@ -64,10 +64,10 @@ export class DataViz1Component implements OnInit {
       .data(root.leaves())
       .enter()
       .append("text")
-        .attr("x", function(d:any){ return d.x0+10})    // +10 to adjust position (more right)
-        .attr("y", function(d:any){ return d.y0+20})    // +20 to adjust position (lower)
+        .attr("x", function(d:any){ return d.x0})
+        .attr("y", function(d:any){ return d.y0+10})
         .text(function(d:any){ return d.data.coin})
-        .attr("font-size", "15px")
+        .attr("font-size", "10px")
         .attr("fill", "white")
    
   }
