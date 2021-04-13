@@ -61,7 +61,7 @@ export class DataService {
     coinsWithMarketCap['2014']['coins'].push({coin: "2014", parent: '', market_cap: ""})
     coinsWithMarketCap['2014']['coins'].push({
       coin: "others", parent: '2014', 
-      market_cap: coinsWithMarketCap['2014']['market_cap'] - tempSum
+      market_cap: Math.abs(coinsWithMarketCap['2014']['market_cap'] - tempSum)
     })
     
     const dateA2018 = Math.round((new Date(2018, 0, 7, 0, 0, 0).getTime()/1000))
