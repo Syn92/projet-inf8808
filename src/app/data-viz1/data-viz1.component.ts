@@ -64,11 +64,17 @@ export class DataViz1Component implements OnInit {
       .data(root.leaves())
       .enter()
       .append("text")
-        .attr("x", function(d:any){ return d.x0})
-        .attr("y", function(d:any){ return d.y0+10})
+        .attr("x", function(d:any){ 
+          const length = d.data.coin.length / 2
+          return ((d.x0 + d.x1) / 2) - (35 * length * (d.x1 - d.x0) / width)
+        })
+        .attr("y", function(d:any){ 
+          return ((d.y0 + d.y1) / 2) + 2
+        })
         .text(function(d:any){ return d.data.coin})
-        .attr("font-size", "10px")
+        .attr("font-size", function(d:any){ 
+          return String((100 * (d.x1 - d.x0) / width)) + "px"
+        }) 
         .attr("fill", "white")
-   
   }
 }
