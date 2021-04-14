@@ -129,5 +129,8 @@
       }
     }
   },
-  "defaultProject": "Projet8808"
+  "defaultProject": "Projet8808",
+  "cli": {
+    "analytics": false
+  }
 }

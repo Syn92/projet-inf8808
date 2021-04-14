@@ -1,9 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service.service';
 import * as d3 from 'd3';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+
+const symbols = {
+  bitcoin: 'BTC',
+  litecoin: 'LTC',
+  ripple: 'XRP',
+  peercoin: 'PPC',
+  omni: 'OMNI',
+  nxt: 'NXT',
+  namecoin: 'NMC',
+  bitshares: 'BTS',
+  quark: 'QRK',
+  megacoin: 'MEC',
+  ethereum: 'ETH',
+  ['bitcoin-cash']: 'BCH',
+  cardano: 'ADA',
+  iota: 'MIOTA',
+  dash: 'DASH',
+  nem: 'NEM',
+  monero: 'XMR',
+  binancecoin: 'BNB',
+  tether: 'USDT',
+  polkadot: 'DOT',
+  uniswap: 'UNI',
+  dogecoin: 'DOGE',
+  others: 'OTH'
+}
 
 @Component({
   selector: 'app-data-viz1',
@@ -33,11 +57,21 @@ export class DataViz1Component implements OnInit {
 
     }).finally(() => {
       this.displaySpinner = false;
+      this.sortMofo()
+      this.findSymbol();
+      this.findGrowth()
       console.log(this.coinLists);
+
       this.displayGraph();
 
     });
 
+  }
+
+  private sortMofo(): void {
+    for (const key in this.coinLists) {
+      this.coinLists[key]['coins'] = this.coinLists[key]['coins'].sort((a,b) => (a.market_cap < b.market_cap) ? 1 : ((b.market_cap < a.market_cap) ? -1 : 0))
+    }
   }
 
   private displayGraph(): void {
@@ -52,8 +86,8 @@ export class DataViz1Component implements OnInit {
 
   private createSVG(id: string, year: string) {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
-    width = 700 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 500 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
     
     var svg = d3.select(id)
     .append("svg")
@@ -70,10 +104,15 @@ export class DataViz1Component implements OnInit {
     root.sum(function(d:any) { return d.market_cap })
     
     d3.treemap()
-      .tile(d3.treemapSquarify.ratio(1))
+      .tile(d3.treemapSquarify.ratio(0.5))
       .size([width, height])
       .padding(4)
       (root)
+
+    var colorScale = d3
+      .scaleLinear<string>()
+      .domain([-80, -2, 2, 80])
+      .range(["DarkRed", "IndianRed", "LightGreen", "Chartreuse"])
 
     svg
       .selectAll("rect")
@@ -85,20 +124,19 @@ export class DataViz1Component implements OnInit {
         .attr('width', function (d:any) { return d.x1 - d.x0; })
         .attr('height', function (d:any) { return d.y1 - d.y0; })
         .style("stroke", "black")
-        .style("fill", "#69b3a2");
+        .attr("fill", function (d:any) { return colorScale(d.data.growth)});
     svg
       .selectAll("text")
       .data(root.leaves())
       .enter()
       .append("text")
         .attr("x", function(d:any){ 
-          const length = d.data.coin.length / 2
-          return ((d.x0 + d.x1) / 2) - (40 * length * (d.x1 - d.x0) / width) - 1
+          return ((d.x0 + d.x1) / 2) - (85 * (d.x1 - d.x0) / width) - 3
         })
         .attr("y", function(d:any){ 
-          return ((d.y0 + d.y1) / 2) + 2
+          return ((d.y0 + d.y1) / 2) + (40 * (d.x1 - d.x0) / width)
         })
-        .text(function(d:any){ return d.data.coin})
+        .text(function(d:any){ return d.data.symbol})
         .attr("font-size", function(d:any){ 
           return String((100 * (d.x1 - d.x0) / width)) + "px"
         }) 
@@ -107,5 +145,40 @@ export class DataViz1Component implements OnInit {
 
   async getFolder(): Promise<string> {
     return this.http.get<any>(`assets/data/dataviz1.json`).toPromise();
+  }
+
+  private findGrowth(): void {
+    for (const key in this.coinLists) {
+      this.coinLists[key]['coins'].forEach(c => {
+        if (key == '2018') {
+          const foundCoin = this.coinLists['2014']['coins'].find(e => e.coin == c.coin)
+          if (foundCoin) {
+            const marketRatio2014 = foundCoin.market_cap/this.coinLists['2014']['market_cap']
+            const marketRatio2018 = c.market_cap/this.coinLists['2018']['market_cap']
+
+            c['growth'] = Number(((marketRatio2018 - marketRatio2014) * 100).toFixed(1))
+          }
+        }
+        if (key == '2021') {
+          const foundCoin = this.coinLists['2018']['coins'].find(e => e.coin == c.coin)
+          if (foundCoin) {
+            const marketRatio2018 = foundCoin.market_cap/this.coinLists['2018']['market_cap']
+            const marketRatio2021 = c.market_cap/this.coinLists['2021']['market_cap']
+
+            c['growth'] = Number(((marketRatio2021 - marketRatio2018) * 100).toFixed(1))
+          }
+        }
+      });
+    } 
+  }
+
+  private findSymbol(): void {
+    for (const key in this.coinLists) {
+      this.coinLists[key]['coins'].forEach(c => {
+        const coinSymbol = symbols[c.coin] 
+        c['symbol'] = coinSymbol
+        c['growth'] = 0
+      });
+    }
   }
 }

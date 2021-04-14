@@ -4,8 +4,6 @@ import { forkJoin } from 'rxjs';
 import { Constants } from '../assets/constants'
 import { IDataMarketGlobal } from 'src/assets/Interfaces';
 
-const fs = require('fs');
-
 @Injectable({
   providedIn: 'root'
 })
