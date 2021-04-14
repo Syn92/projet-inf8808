@@ -1,0 +1,197 @@
+{
+    "2014": {
+        "market_cap": 11682007323,
+        "coins": [
+            {
+                "coin": "bitcoin",
+                "parent": "2014",
+                "market_cap": 11414401972
+            },
+            {
+                "coin": "litecoin",
+                "parent": "2014",
+                "market_cap": 728338292
+            },
+            {
+                "coin": "ripple",
+                "parent": "2014",
+                "market_cap": 199436714
+            },
+            {
+                "coin": "peercoin",
+                "parent": "2014",
+                "market_cap": 153087512
+            },
+            {
+                "coin": "omni",
+                "parent": "2014",
+                "market_cap": 111125681
+            },
+            {
+                "coin": "nxt",
+                "parent": "2014",
+                "market_cap": 56799087
+            },
+            {
+                "coin": "namecoin",
+                "parent": "2014",
+                "market_cap": 64361516
+            },
+            {
+                "coin": "bitshares",
+                "parent": "2014",
+                "market_cap": 26424000
+            },
+            {
+                "coin": "quark",
+                "parent": "2014",
+                "market_cap": 24176612
+            },
+            {
+                "coin": "megacoin",
+                "parent": "2014",
+                "market_cap": 18796184
+            },
+            {
+                "coin": "2014",
+                "parent": "",
+                "market_cap": ""
+            },
+            {
+                "coin": "others",
+                "parent": "2014",
+                "market_cap": 1114940247
+            }
+        ]
+    },
+    "2018": {
+        "market_cap": 798535723921,
+        "coins": [
+            {
+                "coin": "bitcoin",
+                "parent": "2018",
+                "market_cap": 266976271422.5615
+            },
+            {
+                "coin": "ethereum",
+                "parent": "2018",
+                "market_cap": 114769005376.76157
+            },
+            {
+                "coin": "bitcoin-cash",
+                "parent": "2018",
+                "market_cap": 42743274879.04641
+            },
+            {
+                "coin": "ripple",
+                "parent": "2018",
+                "market_cap": 94852796157.8795
+            },
+            {
+                "coin": "litecoin",
+                "parent": "2018",
+                "market_cap": 14419874066.479158
+            },
+            {
+                "coin": "cardano",
+                "parent": "2018",
+                "market_cap": 24420705964.95028
+            },
+            {
+                "coin": "iota",
+                "parent": "2018",
+                "market_cap": 11016809888.469843
+            },
+            {
+                "coin": "dash",
+                "parent": "2018",
+                "market_cap": 8858664356.009962
+            },
+            {
+                "coin": "nem",
+                "parent": "2018",
+                "market_cap": 15379059743.404741
+            },
+            {
+                "coin": "monero",
+                "parent": "2018",
+                "market_cap": 6557019072.215625
+            },
+            {
+                "coin": "2018",
+                "parent": "",
+                "market_cap": ""
+            },
+            {
+                "coin": "others",
+                "parent": "2018",
+                "market_cap": 198542242993.2213
+            }
+        ]
+    },
+    "2021": {
+        "market_cap": 2303577131060,
+        "coins": [
+            {
+                "coin": "bitcoin",
+                "parent": "2021",
+                "market_cap": 1127627591453.6172
+            },
+            {
+                "coin": "ethereum",
+                "parent": "2021",
+                "market_cap": 248501025563.92224
+            },
+            {
+                "coin": "binancecoin",
+                "parent": "2021",
+                "market_cap": 91296938495.78035
+            },
+            {
+                "coin": "ripple",
+                "parent": "2021",
+                "market_cap": 62358711028.565125
+            },
+            {
+                "coin": "cardano",
+                "parent": "2021",
+                "market_cap": 42094384843.012505
+            },
+            {
+                "coin": "tether",
+                "parent": "2021",
+                "market_cap": 44589003740.88944
+            },
+            {
+                "coin": "polkadot",
+                "parent": "2021",
+                "market_cap": 39767756255.008064
+            },
+            {
+                "coin": "uniswap",
+                "parent": "2021",
+                "market_cap": 16376833528.418734
+            },
+            {
+                "coin": "litecoin",
+                "parent": "2021",
+                "market_cap": 16845372838.66344
+            },
+            {
+                "coin": "dogecoin",
+                "parent": "2021",
+                "market_cap": 9172804060.93324
+            },
+            {
+                "coin": "2021",
+                "parent": "",
+                "market_cap": ""
+            },
+            {
+                "coin": "others",
+                "parent": "2021",
+                "market_cap": 604946709251.1897
+            }
+        ]
+    }
+}

@@ -4,6 +4,8 @@ import { forkJoin } from 'rxjs';
 import { Constants } from '../assets/constants'
 import { IDataMarketGlobal } from 'src/assets/Interfaces';
 
+const fs = require('fs');
+
 @Injectable({
   providedIn: 'root'
 })
@@ -49,21 +51,23 @@ export class DataService {
 
     const dateA2014 = Math.round((new Date(2014, 0, 5, 0, 0, 0).getTime()/1000))
     const dateB2014 = Math.round((new Date(2014, 0, 5, 23, 59, 59).getTime()/1000))
-    
+    console.log("fetching1");
     let tempSum = 0;
     for (const id in top2014) {
       const path1 = `/coins/${top2014[id]}/market_chart/range?vs_currency=usd&from=${dateA2014}&to=${dateB2014}`
       const request: any = await this.http.get(Constants.COIN_API + path1, {params: Constants.PARAMS_BTC}).toPromise()
       coinsWithMarketCap['2014']['coins'].push({coin: top2014[id], parent: '2014', market_cap: request.market_caps[0][1]})
-      tempSum += request.market_caps[0][1];
+      tempSum += request.market_caps[0][1];     
     }
+
     coinsWithMarketCap['2014']['market_cap'] = Number(global2014[0].market_cap)
     coinsWithMarketCap['2014']['coins'].push({coin: "2014", parent: '', market_cap: ""})
     coinsWithMarketCap['2014']['coins'].push({
       coin: "others", parent: '2014', 
       market_cap: Math.abs(coinsWithMarketCap['2014']['market_cap'] - tempSum)
     })
-    
+    console.log("fetching2");
+
     const dateA2018 = Math.round((new Date(2018, 0, 7, 0, 0, 0).getTime()/1000))
     const dateB2018 = Math.round((new Date(2018, 0, 7, 23, 59, 59).getTime()/1000))
     tempSum = 0
@@ -80,10 +84,10 @@ export class DataService {
       coin: "others", parent: '2018', 
       market_cap: coinsWithMarketCap['2018']['market_cap'] - tempSum
     })
-    
     const dateA2021 = Math.round((new Date().getTime()/1000 - 86460*2))
     const dateB2021 = Math.round((new Date().getTime()/1000 - 86400))
     tempSum = 0
+    console.log("fetching3");
 
     for (const coin in coinList) {
       const id = coinList[coin].id

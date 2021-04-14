@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service.service';
 import * as d3 from 'd3';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-data-viz1',
@@ -9,17 +12,28 @@ import * as d3 from 'd3';
 })
 export class DataViz1Component implements OnInit {
 
+  displaySpinner = true;
   coinLists = {}
 
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService, private http: HttpClient) {
   }
 
   async ngOnInit(): Promise<void> {
 
-    this.coinLists = await this.dataService.getProcessedDataViz1();
-    console.log(this.coinLists);
-    
-    this.displayGraph();
+    this.getFolder().then(res => {
+      this.coinLists = res;
+
+    }).catch(async e => {
+      console.log("dataviz1.json not found");
+      this.coinLists = await this.dataService.getProcessedDataViz1();
+
+    }).finally(() => {
+      this.displaySpinner = false;
+      console.log(this.coinLists);
+      this.displayGraph();
+
+    });
+
   }
 
   private displayGraph(): void {
@@ -31,7 +45,7 @@ export class DataViz1Component implements OnInit {
   private createSVG(id: string, year: string) {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
     width = 800 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    height = 500 - margin.top - margin.bottom;
     
     var svg = d3.select(id)
     .append("svg")
@@ -81,5 +95,9 @@ export class DataViz1Component implements OnInit {
           return String((100 * (d.x1 - d.x0) / width)) + "px"
         }) 
         .attr("fill", "white")
+  }
+
+  async getFolder(): Promise<string> {
+    return this.http.get<any>(`assets/data/dataviz1.json`).toPromise();
   }
 }
