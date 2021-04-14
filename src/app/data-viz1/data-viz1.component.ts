@@ -23,13 +23,17 @@ export class DataViz1Component implements OnInit {
   }
 
   private displayGraph(): void {
-    // set the dimensions and margins of the graph
+    this.createSVG('#graph1a', '2014')
+    this.createSVG('#graph1b', '2018')
+    this.createSVG('#graph1c', '2021')
+  }
+
+  private createSVG(id: string, year: string) {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
     width = 800 - margin.left - margin.right,
     height = 600 - margin.top - margin.bottom;
-
-    // append the svg object to the body of the page
-    var svg = d3.select("#graph1")
+    
+    var svg = d3.select(id)
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -39,11 +43,12 @@ export class DataViz1Component implements OnInit {
           
     var root = d3.stratify()
       .id(function(d:any) { return d.coin; })
-      .parentId(function(d:any) { return d.parent; })(this.coinLists['2014']['coins'])
+      .parentId(function(d:any) { return d.parent; })(this.coinLists[year]['coins'])
     
     root.sum(function(d:any) { return d.market_cap })
     
     d3.treemap()
+      .tile(d3.treemapSquarify.ratio(1))
       .size([width, height])
       .padding(4)
       (root)
@@ -66,7 +71,7 @@ export class DataViz1Component implements OnInit {
       .append("text")
         .attr("x", function(d:any){ 
           const length = d.data.coin.length / 2
-          return ((d.x0 + d.x1) / 2) - (35 * length * (d.x1 - d.x0) / width)
+          return ((d.x0 + d.x1) / 2) - (40 * length * (d.x1 - d.x0) / width) - 1
         })
         .attr("y", function(d:any){ 
           return ((d.y0 + d.y1) / 2) + 2
