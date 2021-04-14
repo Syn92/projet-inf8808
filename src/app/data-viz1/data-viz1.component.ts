@@ -36,6 +36,8 @@ const symbols = {
 })
 export class DataViz1Component implements OnInit {
 
+  tooltip = undefined;
+
   displaySpinner = true;
   coinLists = {}
 
@@ -61,7 +63,7 @@ export class DataViz1Component implements OnInit {
       this.findSymbol();
       this.findGrowth()
       console.log(this.coinLists);
-
+      this.setupToolTip();
       this.displayGraph();
 
     });
@@ -71,20 +73,36 @@ export class DataViz1Component implements OnInit {
   private sortMofo(): void {
     for (const key in this.coinLists) {
       this.coinLists[key]['coins'] = this.coinLists[key]['coins'].sort((a,b) => (a.market_cap < b.market_cap) ? 1 : ((b.market_cap < a.market_cap) ? -1 : 0))
+      for (const i in this.coinLists[key]['coins']) {
+        this.coinLists[key]['coins'][i]['rank'] = Number(i)+1
+      }
     }
   }
 
+  private setupToolTip(): void {
+    this.tooltip = d3.select(".tooltip")
+    .append("div")
+      .style("position", "absolute")
+      .style("visibility", "hidden")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px")
+  
+  }
+
   private displayGraph(): void {
-    this.createSVG('#graph1a', '2014')
-    this.createSVG('#graph1b', '2018')
-    this.createSVG('#graph1c', '2021')
+    this.createSVG('#graph1a', '2014', this.tooltip)
+    this.createSVG('#graph1b', '2018', this.tooltip)
+    this.createSVG('#graph1c', '2021', this.tooltip)
 
     this.marketCap2014 = this.coinLists['2014']['market_cap']
     this.marketCap2018 = this.coinLists['2018']['market_cap']
     this.marketCap2021 = this.coinLists['2021']['market_cap']
   }
 
-  private createSVG(id: string, year: string) {
+  private createSVG(id: string, year: string, tooltip: any) {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
     width = 500 - margin.left - margin.right,
     height = 700 - margin.top - margin.bottom;
@@ -114,17 +132,37 @@ export class DataViz1Component implements OnInit {
       .domain([-80, -2, 2, 80])
       .range(["DarkRed", "IndianRed", "LightGreen", "Chartreuse"])
 
+    // const g = 
+    // const tip = d3Tip.tip().attr('class', 'd3-tip').html(function (d) { return tooltip.getContents(d) })
+    
     svg
       .selectAll("rect")
       .data(root.leaves())
       .enter()
       .append("rect")
+        .attr('id', function(d:any) { return `Y${d.parent.data.coin}R${d.data.rank}`})
+        .attr('class', function(d:any) {return `rank${d.data.rank}`})
         .attr('x', function (d:any) { return d.x0; })
         .attr('y', function (d:any) { return d.y0; })
         .attr('width', function (d:any) { return d.x1 - d.x0; })
         .attr('height', function (d:any) { return d.y1 - d.y0; })
         .style("stroke", "black")
-        .attr("fill", function (d:any) { return colorScale(d.data.growth)});
+        .attr("fill", function (d:any) { return colorScale(d.data.growth)})
+        .on("mouseover", function(d:any) {
+          console.log(this);
+          
+          tooltip.style("visibility", "visible")
+          tooltip.html(
+            `<p>${d.data.coin}</p>` +
+            "<img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'></img>" +
+            "<br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
+        })
+        .on("mouseout", function(d:any) {
+          tooltip.style("visibility", "hidden")
+        })
+
+
+
     svg
       .selectAll("text")
       .data(root.leaves())
@@ -141,6 +179,12 @@ export class DataViz1Component implements OnInit {
           return String((100 * (d.x1 - d.x0) / width)) + "px"
         }) 
         .attr("fill", "white")
+        .on("mouseover", function(d:any) {
+          tooltip.style("visibility", "visible")
+        })
+        .on("mouseout", function(d:any) {
+          tooltip.style("visibility", "hidden")
+        })
   }
 
   async getFolder(): Promise<string> {
@@ -181,4 +225,5 @@ export class DataViz1Component implements OnInit {
       });
     }
   }
+
 }
