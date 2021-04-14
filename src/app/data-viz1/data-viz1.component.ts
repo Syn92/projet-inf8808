@@ -15,6 +15,10 @@ export class DataViz1Component implements OnInit {
   displaySpinner = true;
   coinLists = {}
 
+  marketCap2014 = 0
+  marketCap2018 = 0
+  marketCap2021 = 0
+
   constructor(private dataService: DataService, private http: HttpClient) {
   }
 
@@ -40,11 +44,15 @@ export class DataViz1Component implements OnInit {
     this.createSVG('#graph1a', '2014')
     this.createSVG('#graph1b', '2018')
     this.createSVG('#graph1c', '2021')
+
+    this.marketCap2014 = this.coinLists['2014']['market_cap']
+    this.marketCap2018 = this.coinLists['2018']['market_cap']
+    this.marketCap2021 = this.coinLists['2021']['market_cap']
   }
 
   private createSVG(id: string, year: string) {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
-    width = 800 - margin.left - margin.right,
+    width = 700 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
     
     var svg = d3.select(id)
