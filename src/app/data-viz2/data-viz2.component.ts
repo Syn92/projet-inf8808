@@ -26,7 +26,6 @@ export class DataViz2Component implements OnInit {
     }).finally(async () => {
       this.btcPrices = await this.dataService.getProcessedDataViz2();
       this.cherryPickDate(this.btcPrices, this.sp500)
-      console.log("cherryPickedDates", this.cherryPickDates);
       this.displayGraph();
     });
   }
@@ -47,8 +46,8 @@ export class DataViz2Component implements OnInit {
 
   private displayGraph(): void {
     var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    width = 1000 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
 
     var svg = d3.select("#graph2")
       .append("svg")
@@ -67,7 +66,7 @@ export class DataViz2Component implements OnInit {
       .call(d3.axisBottom(x));
 
     // Add Y axis
-    var y = d3.scaleLinear()
+    var y = d3.scaleLog()
       .domain([d3.min(this.cherryPickDates, function(d) { return +d.btc_price; }), d3.max(this.cherryPickDates, function(d) { return +d.btc_price; })])
       .range([ height, 0 ]);
     svg.append("g")
