@@ -35,6 +35,14 @@ export class Constants {
       }
     })
 
+    public static readonly PARAMS_BTC2 = new HttpParams({
+      fromObject: {
+        vs_currency: 'usd',
+        from: '1388552400',
+        to: '1617768000'
+      }
+    })
+
     public static readonly PARAMS_SEXY1 = new HttpParams({
       fromObject: {
         key: Constants.KEY3,

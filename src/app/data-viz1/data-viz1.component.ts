@@ -149,16 +149,16 @@ export class DataViz1Component implements OnInit {
         .style("stroke", "black")
         .attr("fill", function (d:any) { return colorScale(d.data.growth)})
         .on("mouseover", function(d:any) {
-          console.log(this);
+          // console.log(this);
           
-          tooltip.style("visibility", "visible")
-          tooltip.html(
-            `<p>${d.data.coin}</p>` +
-            "<img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'></img>" +
-            "<br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
+          // tooltip.style("visibility", "visible")
+          // tooltip.html(
+          //   `<p>${d.data.coin}</p>` +
+          //   "<img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'></img>" +
+          //   "<br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
         })
         .on("mouseout", function(d:any) {
-          tooltip.style("visibility", "hidden")
+          // tooltip.style("visibility", "hidden")
         })
 
 

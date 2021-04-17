@@ -105,11 +105,16 @@ export class DataService {
     return coinsWithMarketCap;
   }
 
+  public async getProcessedDataViz2(): Promise<any> {
+    const btc = await this.http.get(Constants.COIN_API + '/coins/bitcoin/market_chart/range', {params: Constants.PARAMS_BTC2}).toPromise()
+    return this.formatDateUnixToDate((btc as any).prices)
+  }
+
   private retrieveDataTest(): Promise<any> {
 
     let global = this.http.get(Constants.NOMICS_API + '/market-cap/history', {params: Constants.PARAMS_G})
-    let volume = this.http.get(Constants.NOMICS_API + '/volume/history', {params: Constants.PARAMS_V})
     let btc    = this.http.get(Constants.COIN_API + '/coins/bitcoin/market_chart/range', {params: Constants.PARAMS_BTC})
+    let volume = this.http.get(Constants.NOMICS_API + '/volume/history', {params: Constants.PARAMS_V})
 
     return forkJoin([global, btc, volume]).toPromise()
   }
@@ -155,6 +160,18 @@ export class DataService {
       dates.push([d, e[1]])
     });
     
+    return dates
+  }
+
+  private formatDateUnixToDate(data: any) {
+    const dates = [];
+    console.log((new Date()).getDay());
+    data.forEach(e => {
+      const d = new Date(e[0]);
+      const formated = `${d.getFullYear()}-${(d.getMonth()+1)>=10?(d.getMonth()+1):"0"+(d.getMonth()+1)}-${d.getDate()>=10?d.getDate():"0"+d.getDate()}`;
+      dates.push([formated, e[1]])
+    });
+
     return dates
   }
 
