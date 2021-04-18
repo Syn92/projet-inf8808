@@ -110,7 +110,7 @@ export class DataService {
     return this.formatDateUnixToDate((btc as any).prices)
   }
 
-  private retrieveDataTest(): Promise<any> {
+  private retrieveData(): Promise<any> {
 
     let global = this.http.get(Constants.NOMICS_API + '/market-cap/history', {params: Constants.PARAMS_G})
     let btc    = this.http.get(Constants.COIN_API + '/coins/bitcoin/market_chart/range', {params: Constants.PARAMS_BTC})
@@ -121,16 +121,17 @@ export class DataService {
 
   public async getProcessedData(): Promise<Object> {
 
-    const res = await this.retrieveDataTest()
+    const res = await this.retrieveData()
     const global = this.formatDateString(res[0])
     const btcPrice = this.formatDateUnix(res[1].prices)
-    const volume = res[2].map(d => {
+    const btcDom = []
+    const volumeDetailed = res[2].map(d => {
       const date = new Date(d.timestamp)
       const vol = parseInt(d.volume)
 
       return [date, vol]
     })
-    const btcDom = []
+    const volume = this.formatVolume(volumeDetailed)
     
     const globalMap = this.arrayToMap(global)
     const btcMC = this.arrayToMap(this.formatDateUnix(res[1].market_caps))
@@ -145,12 +146,48 @@ export class DataService {
       btcDom.push([val.timestamp, cap])
     })
 
+    
     return {
       global: global,
       volume: volume,
       btcPrice: btcPrice,
       btcDom: btcDom
     }
+  }
+  
+  private formatVolume(data) {
+    var monthIndex = []
+    const monthAvg = []
+
+    // get the index of the last day of every month and of the last day in the dataset
+    data.forEach((v: [Date, number], i: number) => {
+      if ((v[0].getFullYear() == 2013))
+        return
+      
+      if ((i == data.length - 1) || (v[0].getMonth() != data[i + 1][0].getMonth()))
+      monthIndex.push(i)
+    })
+    
+    // keep only every other month (Feb, Apr, Jun, Aug, Oct, Dec) of every year
+    monthIndex = monthIndex.filter((v, i) => i % 2 === 1)
+
+    // calculate average between two months (ex: between Jan and Feb, Mar and Apr, etc)
+    monthIndex.forEach((v, i) => {
+      if (i == 0) {
+        monthAvg.push([new Date(data[v][0].getFullYear(), data[v][0].getMonth(),0), this.calculateAverage(data.slice(0, v + 1))])
+      } else {
+        monthAvg.push([new Date(data[v][0].getFullYear(), data[v][0].getMonth(),0), this.calculateAverage(data.slice(monthIndex[i - 1] + 1, v + 1))])
+      }
+    })
+
+    return {
+      average: monthAvg,
+      detailed: data
+    }
+  }
+
+  private calculateAverage(arr) {
+    return arr.reduce((a, b) => a + b[1], 0) / arr.length
   }
 
   private formatDateUnix(data: any) {
@@ -165,7 +202,6 @@ export class DataService {
 
   private formatDateUnixToDate(data: any) {
     const dates = [];
-    console.log((new Date()).getDay());
     data.forEach(e => {
       const d = new Date(e[0]);
       const formated = `${d.getFullYear()}-${(d.getMonth()+1)>=10?(d.getMonth()+1):"0"+(d.getMonth()+1)}-${d.getDate()>=10?d.getDate():"0"+d.getDate()}`;
