@@ -30,12 +30,13 @@ export class DataViz3Component implements OnInit {
   }
 
   private displayGraph() {
+    console.log(this.data)
     this.setupBaseGraph();
     this.setupAxies();
-    this.drawVol()
     this.drawBTC();
     this.drawBTCDom()
     this.drawTotMC()
+    this.drawVol()
   }
   
   private setupBaseGraph() {
@@ -55,6 +56,7 @@ export class DataViz3Component implements OnInit {
     })
 
     // setup scales
+
     this.xScale = d3.scaleTime()
       .domain(d3.extent(date, d => d))
       .range([0, this.width])
@@ -99,7 +101,7 @@ export class DataViz3Component implements OnInit {
     this.svg.append('path')
       .datum(this.data.btcPrice)
       .attr('fill', 'none')
-      .attr('stroke', 'lightseagreen')
+      .attr('stroke', 'lime')
       .attr('stroke-width', 1.5)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
@@ -112,8 +114,8 @@ export class DataViz3Component implements OnInit {
     this.svg.append('path')
       .datum(this.data.btcDom)
       .attr('fill', 'none')
-      .attr('stroke', 'darkslategray')
-      .attr('stroke-width', 1)
+      .attr('stroke', 'orange')
+      .attr('stroke-width', 1.5)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
         .y(d => this.yScale2(d[1]))
@@ -134,30 +136,16 @@ export class DataViz3Component implements OnInit {
   }
 
   private drawVol() {
-    // Bar Chart of 2 month avg
-    this.svg.selectAll('.bar')
-      .data(this.data.volume['average'])
-      .join('rect')
-      .attr('class', 'bar')
-      .attr('x', d => this.xScale(d[0]) - 5)
-      .attr('y', d => this.yScale1(d[1]))
-      .attr('width', 10)
-      .attr('height', d => this.height - this.yScale1(d[1]))
-      .style('fill', '#ccffcc')
-      .style('stroke', 'black')
-      .style('stroke-width', 0.5)
 
-
-    //uncomment to see line of detailed volume
-    // this.svg.append('path')
-    //   .datum(this.data.volume['detailed'])
-    //   .attr('fill', 'none')
-    //   .attr('stroke', 'green')
-    //   .attr('stroke-width', 1.5)
-    //   .attr('d', d3.line()
-    //     .x(d => this.xScale(d[0]))
-    //     .y(d => this.yScale1(d[1]))
-    //   )
+    this.svg.append('path')
+      .datum(this.data.volume)
+      .attr('fill', 'none')
+      .attr('stroke', 'green')
+      .attr('stroke-width', 1.5)
+      .attr('d', d3.line()
+        .x(d => this.xScale(d[0]))
+        .y(d => this.yScale1(d[1]))
+      )
   }
 
   // Formats number ex: 10000 => 10K
