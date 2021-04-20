@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service.service';  
 import { IData } from '../../assets/Interfaces';
+import * as d3Legend from '../../assets/d3-svg-legend'
 import * as d3 from 'd3';
 
 @Component({
@@ -11,12 +12,14 @@ import * as d3 from 'd3';
 export class DataViz3Component implements OnInit {
   
   private data: IData;
+  private container;
   private svg;
   private xScale;
   private yScale1;
   private yScale2;
   private offset = 100;
   private margin = 50;
+  private containerWidth = 1350;
   private width = 1000 - (this.margin * 2);
   private height = 600 - (this.margin * 2);
 
@@ -36,15 +39,23 @@ export class DataViz3Component implements OnInit {
     this.drawBTC();
     this.drawBTCDom()
     this.drawTotMC()
+    this.drawLegend()
   }
   
   private setupBaseGraph() {
-    this.svg = d3.select('figure#graph')
+    this.container = d3.select('figure#graph')
       .append('svg')
+      .attr('class', 'container')
+      .attr('width', this.containerWidth)
+      .attr('height', this.height + (this.margin * 2))
+      
+    this.svg = this.container.append('svg')
+      .append('g')
       .attr('width', this.width + (this.margin * 2))
       .attr('height', this.height + (this.margin * 2))
-      .append('g')
-      .attr('transform', `translate(${this.margin}, ${this.margin})`);
+      .attr('transform', `translate(${this.containerWidth/2 - this.width/2}, ${this.margin})`);
+
+    console.log(this.svg)
   }
 
   private setupAxies() {
@@ -54,11 +65,12 @@ export class DataViz3Component implements OnInit {
       date.push(e[0])
     })
 
+
+    const ext = d3.extent(date, d => d)
     // setup scales
     this.xScale = d3.scaleTime()
-      .domain(d3.extent(date, d => d))
+      .domain([ext[0].setDate(ext[0].getDate() - 1), ext[1].setDate(ext[1].getDate() + 25)])
       .range([0, this.width])
-      .nice();
       
     const maxY1 = d3.max(this.data.global.map(d => parseInt(d[1])))
     const minY1 = d3.min(this.data.btcPrice.map(d => parseInt(d[1])))
@@ -90,6 +102,7 @@ export class DataViz3Component implements OnInit {
     this.svg.append('g')
       .attr('transform', `translate(${this.width}, 0)`)
       .attr('class', 'y axis2')
+      .style('color', 'orange')
       .call(d3.axisRight(this.yScale2)
         .tickFormat(y => `${y}%`))
       
@@ -99,7 +112,7 @@ export class DataViz3Component implements OnInit {
     this.svg.append('path')
       .datum(this.data.btcPrice)
       .attr('fill', 'none')
-      .attr('stroke', 'lightseagreen')
+      .attr('stroke', 'indigo')
       .attr('stroke-width', 1.5)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
@@ -112,7 +125,7 @@ export class DataViz3Component implements OnInit {
     this.svg.append('path')
       .datum(this.data.btcDom)
       .attr('fill', 'none')
-      .attr('stroke', 'darkslategray')
+      .attr('stroke', 'gold')
       .attr('stroke-width', 1)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))
@@ -135,6 +148,7 @@ export class DataViz3Component implements OnInit {
 
   private drawVol() {
     // Bar Chart of 2 month avg
+    let isSmaller = false;
     this.svg.selectAll('.bar')
       .data(this.data.volume['average'])
       .join('rect')
@@ -143,8 +157,13 @@ export class DataViz3Component implements OnInit {
       .attr('y', d => this.yScale1(d[1]))
       .attr('width', 10)
       .attr('height', d => this.height - this.yScale1(d[1]))
-      .style('fill', '#ccffcc')
-      .style('stroke', 'black')
+      .style('fill', (d, i ,e) => {
+        if (i === 0)
+          return 'green'
+          
+        return e[i-1].__data__[1] < d[1] ? 'green' : 'red'
+      })
+      .style('opacity', 0.35)
       .style('stroke-width', 0.5)
 
 
@@ -158,6 +177,22 @@ export class DataViz3Component implements OnInit {
     //     .x(d => this.xScale(d[0]))
     //     .y(d => this.yScale1(d[1]))
     //   )
+  }
+
+  private drawLegend() {
+    const scale = d3.scaleOrdinal()
+                    .domain(['Capitalisation totale des cryptomonnaies','Valeur du Bitcoin','Dominance du bitcoin'])
+                    .range(['rgb(70, 130, 180)','#4B0082','rgb(255, 165, 0)'])
+
+    const legend = d3Legend.legendColor()
+                           .shape('line')
+                           .labelWrap(150)
+                           .scale(scale)
+
+    this.container.append('g')
+      .attr('class', 'legend')
+      .attr('transform',  `translate(0, 100) `)
+      .call(legend)
   }
 
   // Formats number ex: 10000 => 10K
