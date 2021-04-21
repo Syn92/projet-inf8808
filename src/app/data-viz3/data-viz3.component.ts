@@ -125,7 +125,7 @@ export class DataViz3Component implements OnInit {
     this.svg.append('path')
       .datum(this.data.btcDom)
       .attr('fill', 'none')
-      .attr('stroke', 'gold')
+      .attr('stroke', 'orange')
       .attr('stroke-width', 1)
       .attr('d', d3.line()
         .x(d => this.xScale(d[0]))

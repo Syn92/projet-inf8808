@@ -1,8 +1,11 @@
 import { HttpParams } from "@angular/common/http";
 
 export class Constants {
+
+    public static readonly CORS_PROXY = 'https://stormy-earth-72272.herokuapp.com/'
+
     public static readonly COIN_API = "https://api.coingecko.com/api/v3";
-    public static readonly NOMICS_API = "https://api.nomics.com/v1";
+    public static readonly NOMICS_API = Constants.CORS_PROXY + "https://api.nomics.com/v1";
 
     public static readonly KEY1 = '2e6869bdd813e302a273c7acd47a8272';
     public static readonly KEY2 = 'dd0fb6d7085993e10e3a8053075802e8';
