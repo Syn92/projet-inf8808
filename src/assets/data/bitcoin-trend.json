@@ -1,0 +1,354 @@
+[
+  {
+    "Month": "Jan-01-14",
+    "bitcoin": 8
+  },
+  {
+    "Month": "Feb-01-14",
+    "bitcoin": 10
+  },
+  {
+    "Month": "Mar-01-14",
+    "bitcoin": 7
+  },
+  {
+    "Month": "Apr-01-14",
+    "bitcoin": 4
+  },
+  {
+    "Month": "May-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Jun-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Jul-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Aug-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Sep-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Oct-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Nov-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Dec-01-14",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Jan-01-15",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Feb-01-15",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Mar-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Apr-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "May-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Jun-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Jul-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Aug-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Sep-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Oct-01-15",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Nov-01-15",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Dec-01-15",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Jan-01-16",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Feb-01-16",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Mar-01-16",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Apr-01-16",
+    "bitcoin": 2
+  },
+  {
+    "Month": "May-01-16",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Jun-01-16",
+    "bitcoin": 4
+  },
+  {
+    "Month": "Jul-01-16",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Aug-01-16",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Sep-01-16",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Oct-01-16",
+    "bitcoin": 2
+  },
+  {
+    "Month": "Nov-01-16",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Dec-01-16",
+    "bitcoin": 3
+  },
+  {
+    "Month": "Jan-01-17",
+    "bitcoin": 4
+  },
+  {
+    "Month": "Feb-01-17",
+    "bitcoin": 4
+  },
+  {
+    "Month": "Mar-01-17",
+    "bitcoin": 5
+  },
+  {
+    "Month": "Apr-01-17",
+    "bitcoin": 4
+  },
+  {
+    "Month": "May-01-17",
+    "bitcoin": 11
+  },
+  {
+    "Month": "Jun-01-17",
+    "bitcoin": 11
+  },
+  {
+    "Month": "Jul-01-17",
+    "bitcoin": 9
+  },
+  {
+    "Month": "Aug-01-17",
+    "bitcoin": 16
+  },
+  {
+    "Month": "Sep-01-17",
+    "bitcoin": 14
+  },
+  {
+    "Month": "Oct-01-17",
+    "bitcoin": 16
+  },
+  {
+    "Month": "Nov-01-17",
+    "bitcoin": 40
+  },
+  {
+    "Month": "Dec-01-17",
+    "bitcoin": 100
+  },
+  {
+    "Month": "Jan-01-18",
+    "bitcoin": 50
+  },
+  {
+    "Month": "Feb-01-18",
+    "bitcoin": 35
+  },
+  {
+    "Month": "Mar-01-18",
+    "bitcoin": 20
+  },
+  {
+    "Month": "Apr-01-18",
+    "bitcoin": 16
+  },
+  {
+    "Month": "May-01-18",
+    "bitcoin": 12
+  },
+  {
+    "Month": "Jun-01-18",
+    "bitcoin": 12
+  },
+  {
+    "Month": "Jul-01-18",
+    "bitcoin": 11
+  },
+  {
+    "Month": "Aug-01-18",
+    "bitcoin": 11
+  },
+  {
+    "Month": "Sep-01-18",
+    "bitcoin": 10
+  },
+  {
+    "Month": "Oct-01-18",
+    "bitcoin": 7
+  },
+  {
+    "Month": "Nov-01-18",
+    "bitcoin": 10
+  },
+  {
+    "Month": "Dec-01-18",
+    "bitcoin": 11
+  },
+  {
+    "Month": "Jan-01-19",
+    "bitcoin": 7
+  },
+  {
+    "Month": "Feb-01-19",
+    "bitcoin": 7
+  },
+  {
+    "Month": "Mar-01-19",
+    "bitcoin": 6
+  },
+  {
+    "Month": "Apr-01-19",
+    "bitcoin": 10
+  },
+  {
+    "Month": "May-01-19",
+    "bitcoin": 14
+  },
+  {
+    "Month": "Jun-01-19",
+    "bitcoin": 17
+  },
+  {
+    "Month": "Jul-01-19",
+    "bitcoin": 14
+  },
+  {
+    "Month": "Aug-01-19",
+    "bitcoin": 11
+  },
+  {
+    "Month": "Sep-01-19",
+    "bitcoin": 8
+  },
+  {
+    "Month": "Oct-01-19",
+    "bitcoin": 8
+  },
+  {
+    "Month": "Nov-01-19",
+    "bitcoin": 8
+  },
+  {
+    "Month": "Dec-01-19",
+    "bitcoin": 7
+  },
+  {
+    "Month": "Jan-01-20",
+    "bitcoin": 9
+  },
+  {
+    "Month": "Feb-01-20",
+    "bitcoin": 10
+  },
+  {
+    "Month": "Mar-01-20",
+    "bitcoin": 12
+  },
+  {
+    "Month": "Apr-01-20",
+    "bitcoin": 10
+  },
+  {
+    "Month": "May-01-20",
+    "bitcoin": 13
+  },
+  {
+    "Month": "Jun-01-20",
+    "bitcoin": 9
+  },
+  {
+    "Month": "Jul-01-20",
+    "bitcoin": 10
+  },
+  {
+    "Month": "Aug-01-20",
+    "bitcoin": 11
+  },
+  {
+    "Month": "Sep-01-20",
+    "bitcoin": 8
+  },
+  {
+    "Month": "Oct-01-20",
+    "bitcoin": 9
+  },
+  {
+    "Month": "Nov-01-20",
+    "bitcoin": 17
+  },
+  {
+    "Month": "Dec-01-20",
+    "bitcoin": 25
+  },
+  {
+    "Month": "Jan-01-21",
+    "bitcoin": 50
+  },
+  {
+    "Month": "Feb-01-21",
+    "bitcoin": 51
+  },
+  {
+    "Month": "Mar-01-21",
+    "bitcoin": 35
+  },
+  {
+    "Month": "Apr-01-21",
+    "bitcoin": 35
+  }
+]

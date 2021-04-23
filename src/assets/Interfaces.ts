@@ -12,12 +12,13 @@ export interface IDataVolume {
 
 export interface IMapValue {
     timestamp: Date,
-    value
+    value: any
 }
 
 export interface IData {
     btcPrice: [],
     btcDom: [],
     global: [],
-    volume: IDataVolume[]
+    volume: IDataVolume[],
+    trend: IMapValue[]
 }

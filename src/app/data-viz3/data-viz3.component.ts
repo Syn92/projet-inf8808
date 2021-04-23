@@ -19,7 +19,7 @@ export class DataViz3Component implements OnInit {
   private yScale2;
   private offset = 100;
   private margin = 50;
-  private containerWidth = 1350;
+  private containerWidth = 1500;
   private width = 1000 - (this.margin * 2);
   private height = 600 - (this.margin * 2);
 
@@ -40,6 +40,7 @@ export class DataViz3Component implements OnInit {
     this.drawBTCDom()
     this.drawTotMC()
     this.drawLegend()
+    this.drawTrend()
   }
   
   private setupBaseGraph() {
@@ -102,7 +103,6 @@ export class DataViz3Component implements OnInit {
     this.svg.append('g')
       .attr('transform', `translate(${this.width}, 0)`)
       .attr('class', 'y axis2')
-      .style('color', 'orange')
       .call(d3.axisRight(this.yScale2)
         .tickFormat(y => `${y}%`))
       
@@ -166,7 +166,6 @@ export class DataViz3Component implements OnInit {
       .style('opacity', 0.35)
       .style('stroke-width', 0.5)
 
-
     //uncomment to see line of detailed volume
     // this.svg.append('path')
     //   .datum(this.data.volume['detailed'])
@@ -179,21 +178,55 @@ export class DataViz3Component implements OnInit {
     //   )
   }
 
+  private drawTrend() {
+    console.log(this.data.trend)
+    this.svg.append('path')
+      .datum(this.data.trend)
+      .attr('fill', 'none')
+      .attr('stroke', 'deeppink')
+      .attr('stroke-width', 1.5)
+      .attr('d', d3.line()
+        .x(d => this.xScale(d['timestamp']))
+        .y(d => this.yScale2(d['value']))
+      )
+  }
+  
   private drawLegend() {
-    const scale = d3.scaleOrdinal()
-                    .domain(['Capitalisation totale des cryptomonnaies','Valeur du Bitcoin','Dominance du bitcoin'])
-                    .range(['rgb(70, 130, 180)','#4B0082','rgb(255, 165, 0)'])
+    const scaleLeft = d3.scaleOrdinal()
+                    .domain(['Capitalisation totale des cryptomonnaies','Valeur du Bitcoin', `Volume d'échange (incrémenté)`, `Volume d'échange (décrémenté)`])
+                    .range(['rgb(70, 130, 180)','#4B0082', 'rgb(166, 211, 166)', 'rgb(255, 166, 166)'])
+    
+    const scaleRight  = d3.scaleOrdinal()
+                    .domain(['Dominance du bitcoin', `'Bitcoin' sur google trend US`])
+                    .range(['rgb(255, 165, 0)', 'rgb(255, 20, 147)'])
 
-    const legend = d3Legend.legendColor()
-                           .shape('line')
+    const legendLeft = d3Legend.legendColor()
+                           .title('Axe Gauche')
+                           .shapeHeight(5)
+                           .shapeWidth(20)
+                           .shapePadding(5)
                            .labelWrap(150)
-                           .scale(scale)
+                           .scale(scaleLeft)
+
+    const legendRight = d3Legend.legendColor()
+                           .title('Axe Droite')
+                           .shapeHeight(5)
+                           .shapeWidth(20)
+                           .shapePadding(5)
+                           .labelWrap(150)
+                           .scale(scaleRight)
 
     this.container.append('g')
       .attr('class', 'legend')
-      .attr('transform',  `translate(0, 100) `)
-      .call(legend)
+      .attr('transform',  `translate(70, 100) `)
+      .call(legendLeft)
+
+    this.container.append('g')
+      .attr('class', 'legend')
+      .attr('transform',  `translate(${this.containerWidth/2 + this.width/2 + 80}, 100) `)
+      .call(legendRight)
   }
+
 
   // Formats number ex: 10000 => 10K
   private nFormatter(num, digits) {

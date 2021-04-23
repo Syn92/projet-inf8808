@@ -5,7 +5,6 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 
 import { AppComponent } from './app.component';
 import { DataService } from './data-service.service';
-import { TestD3Component } from './test-d3/test-d3.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataViz1Component } from './data-viz1/data-viz1.component';
 import { DataViz2Component } from './data-viz2/data-viz2.component';
@@ -14,7 +13,6 @@ import { DataViz3Component } from './data-viz3/data-viz3.component';
 @NgModule({
   declarations: [
     AppComponent,
-    TestD3Component,
     DataViz1Component,
     DataViz2Component,
     DataViz3Component

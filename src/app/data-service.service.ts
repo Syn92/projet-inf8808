@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { Constants } from '../assets/constants'
 import { IDataMarketGlobal } from 'src/assets/Interfaces';
@@ -115,8 +115,9 @@ export class DataService {
     let global = this.http.get(Constants.NOMICS_API + '/market-cap/history', {params: Constants.PARAMS_G})
     let btc    = this.http.get(Constants.COIN_API + '/coins/bitcoin/market_chart/range', {params: Constants.PARAMS_BTC})
     let volume = this.http.get(Constants.NOMICS_API + '/volume/history', {params: Constants.PARAMS_V})
+    let trend  = this.http.get('assets/data/bitcoin-trend.json').toPromise()
 
-    return forkJoin([global, btc, volume]).toPromise()
+    return forkJoin([global, btc, volume, trend]).toPromise()
   }
 
   public async getProcessedData(): Promise<Object> {
@@ -146,12 +147,19 @@ export class DataService {
       btcDom.push([val.timestamp, cap])
     })
 
+    let trend = res[3].map(e => {
+      return {
+        timestamp: new Date(e.Month),
+        value: e.bitcoin
+      }
+    })
     
     return {
       global: global,
       volume: volume,
       btcPrice: btcPrice,
-      btcDom: btcDom
+      btcDom: btcDom,
+      trend: trend
     }
   }
   
