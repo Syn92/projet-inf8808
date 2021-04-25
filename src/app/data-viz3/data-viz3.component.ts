@@ -25,8 +25,20 @@ export class DataViz3Component implements OnInit {
   private height = 600 - (this.margin * 2);
   private test;
 
-  constructor(private dataService: DataService) { }
+  public showBtc: boolean = true;
+  public showBtcDom: boolean = true;
+  public showTrend: boolean = true;
+  public showVol: boolean = true;
+  public showTotal: boolean = true;
 
+  public btc: any;
+  public btcDom: any;
+  public trend: any;
+  public vol: any;
+  public total: any;
+  
+  constructor(private dataService: DataService) { }
+  
   public ngOnInit(): void {
     this.dataService.getProcessedData().then((res: IData) => {
       this.data = res
@@ -113,7 +125,7 @@ export class DataViz3Component implements OnInit {
   }
 
   private drawBTC() {
-    this.svg.append('path')
+    this.btc = this.svg.append('path')
       .datum(this.data.btcPrice)
       .attr('fill', 'none')
       .attr('stroke', 'indigo')
@@ -126,7 +138,7 @@ export class DataViz3Component implements OnInit {
 
   private drawBTCDom() {
 
-    this.svg.append('path')
+    this.btcDom = this.svg.append('path')
       .datum(this.data.btcDom)
       .attr('fill', 'none')
       .attr('stroke', 'orange')
@@ -139,7 +151,7 @@ export class DataViz3Component implements OnInit {
 
   private drawTotMC() {
 
-    this.test = this.svg.append('path')
+    this.total = this.svg.append('path')
       .datum(this.data.global)
       .attr('fill', 'none')
       .attr('stroke', 'steelblue')
@@ -153,7 +165,7 @@ export class DataViz3Component implements OnInit {
   private drawVol() {
     // Bar Chart of 2 month avg
     let isSmaller = false;
-    this.svg.selectAll('.bar')
+    this.vol = this.svg.selectAll('.bar')
       .data(this.data.volume['average'])
       .join('rect')
       .attr('class', 'bar')
@@ -184,7 +196,7 @@ export class DataViz3Component implements OnInit {
 
   private drawTrend() {
     console.log(this.data.trend)
-    this.svg.append('path')
+    this.trend = this.svg.append('path')
       .datum(this.data.trend)
       .attr('fill', 'none')
       .attr('stroke', 'deeppink')
@@ -277,9 +289,13 @@ export class DataViz3Component implements OnInit {
     .on("mouseover", function(){return obj.tooltip.style("visibility", "visible");})
     .on("mousemove", function(event: MouseEvent) {
       const date = obj.xScale.invert(event.clientX - document.getElementById('bg').getBoundingClientRect().x)
-      console.log(obj.test.node().getBBox())
+      console.log(obj.total.node().getBBox())
       return obj.tooltip.style("y", "0px").style("left",(event.pageX)+"px");
     })
     .on("mouseout", function(){return obj.tooltip.style("visibility", "hidden");});
+  }
+
+  public onToggle(obj: any, show: boolean){
+      obj.style("visibility", show ? "visible" : "hidden")
   }
 }

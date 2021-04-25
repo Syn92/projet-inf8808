@@ -1,1 +1,8 @@
 <figure id='graph'></figure>
+<div class="toggle_container">
+    <mat-slide-toggle [(ngModel)]="showBtc" id="btc" (change)="onToggle(btc, showBtc)">Bitcoin</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="showTotal" id="total" (change)="onToggle(total, showTotal)">Capitalisation totale</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="showTrend" id="trend" (change)="onToggle(trend, showTrend)">Google trend</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="showBtcDom" id="btcDom" (change)="onToggle(btcDom, showBtcDom)">Dominance du Bitcoin</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="showVol" id="vol" (change)="onToggle(vol, showVol)">Volume d'échange</mat-slide-toggle>
+</div>
