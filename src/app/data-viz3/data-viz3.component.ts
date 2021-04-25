@@ -12,6 +12,7 @@ import * as d3 from 'd3';
 export class DataViz3Component implements OnInit {
   
   private data: IData;
+  public tooltip: any;
   private container;
   private svg;
   private xScale;
@@ -22,6 +23,7 @@ export class DataViz3Component implements OnInit {
   private containerWidth = 1500;
   private width = 1000 - (this.margin * 2);
   private height = 600 - (this.margin * 2);
+  private test;
 
   constructor(private dataService: DataService) { }
 
@@ -41,6 +43,9 @@ export class DataViz3Component implements OnInit {
     this.drawTotMC()
     this.drawLegend()
     this.drawTrend()
+    this.drawRect()
+    this.tooltip = this.createTooltip()
+    this.tooltipListener(this)
   }
   
   private setupBaseGraph() {
@@ -55,8 +60,6 @@ export class DataViz3Component implements OnInit {
       .attr('width', this.width + (this.margin * 2))
       .attr('height', this.height + (this.margin * 2))
       .attr('transform', `translate(${this.containerWidth/2 - this.width/2}, ${this.margin})`);
-
-    console.log(this.svg)
   }
 
   private setupAxies() {
@@ -105,6 +108,7 @@ export class DataViz3Component implements OnInit {
       .attr('class', 'y axis2')
       .call(d3.axisRight(this.yScale2)
         .tickFormat(y => `${y}%`))
+
       
   }
 
@@ -127,7 +131,7 @@ export class DataViz3Component implements OnInit {
       .attr('fill', 'none')
       .attr('stroke', 'orange')
       .attr('stroke-width', 1)
-      .attr('d', d3.line()
+      .attr('d', d3.line().curve(d3.curveBasis)
         .x(d => this.xScale(d[0]))
         .y(d => this.yScale2(d[1]))
       )
@@ -135,7 +139,7 @@ export class DataViz3Component implements OnInit {
 
   private drawTotMC() {
 
-    this.svg.append('path')
+    this.test = this.svg.append('path')
       .datum(this.data.global)
       .attr('fill', 'none')
       .attr('stroke', 'steelblue')
@@ -189,6 +193,17 @@ export class DataViz3Component implements OnInit {
         .x(d => this.xScale(d['timestamp']))
         .y(d => this.yScale2(d['value']))
       )
+  }
+
+  private drawRect() {
+    this.svg.append('rect')
+      .attr('id', 'bg')
+      .attr('x', d => this.xScale(new Date(2014, 0, 1)))
+      .attr('y', d => this.yScale2(100))
+      .attr('z', 1000)
+      .attr('width', this.width)
+      .attr('height', d => this.height - this.margin)
+      .style('opacity', '0')
   }
   
   private drawLegend() {
@@ -245,5 +260,26 @@ export class DataViz3Component implements OnInit {
       }
     }
     return (num / si[i].value).toFixed(digits).replace(regex, "$1") + si[i].symbol;
+  }
+
+  private createTooltip(){
+    var tooltip = d3.select("#graph")
+    .append("div")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .text("TOOLTIP TEXT");
+    return tooltip
+  }
+
+  private tooltipListener(obj: DataViz3Component){
+    
+    this.svg.select('#bg')
+    .on("mouseover", function(){return obj.tooltip.style("visibility", "visible");})
+    .on("mousemove", function(event: MouseEvent) {
+      const date = obj.xScale.invert(event.clientX - document.getElementById('bg').getBoundingClientRect().x)
+      console.log(obj.test.node().getBBox())
+      return obj.tooltip.style("y", "0px").style("left",(event.pageX)+"px");
+    })
+    .on("mouseout", function(){return obj.tooltip.style("visibility", "hidden");});
   }
 }

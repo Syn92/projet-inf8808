@@ -138,13 +138,17 @@ export class DataService {
     const btcMC = this.arrayToMap(this.formatDateUnix(res[1].market_caps))
 
     btcMC.forEach((val: any, key: any) => {
-      if (!globalMap.has(key))
+      if (!globalMap.has(key)){
         return
+      }
 
-      const temp = val.value / globalMap.get(key).value * 100
-      const cap  = temp > 100 ? 100 : temp
-      
-      btcDom.push([val.timestamp, cap])
+      const btc = val.value - (val.value % 1000000)
+      const global = globalMap.get(key).value - (globalMap.get(key).value % 1000000)
+
+      const temp = btc / global * 100
+      const dom  = temp > 100 ? 100 : temp.toFixed(0)
+
+      btcDom.push([val.timestamp, dom])
     })
 
     let trend = res[3].map(e => {
