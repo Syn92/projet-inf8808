@@ -136,6 +136,7 @@ export class DataService {
     
     const globalMap = this.arrayToMap(global)
     const btcMC = this.arrayToMap(this.formatDateUnix(res[1].market_caps))
+    const domArray: Number[] = [];
 
     btcMC.forEach((val: any, key: any) => {
       if (!globalMap.has(key)){
@@ -147,9 +148,14 @@ export class DataService {
 
       const temp = btc / global * 100
       const dom  = temp > 100 ? 100 : temp.toFixed(0)
-
+      domArray.push(Number(dom));
       btcDom.push([val.timestamp, dom])
     })
+    var btcDomSmoothed: Number[] = [];
+    btcDomSmoothed =  this.EMACalc(domArray, 20)
+    for (let i = 0; i < btcDom.length; i++) {
+      btcDom[i][1] = btcDomSmoothed[i]
+    }
 
     let trend = res[3].map(e => {
       return {
@@ -165,6 +171,17 @@ export class DataService {
       btcDom: btcDom,
       trend: trend
     }
+  }
+
+  private EMACalc(mArray,mRange) {
+    var k = 2/(mRange + 1);
+    // first item is just the same as the first item in the input
+    const emaArray = [mArray[0]];
+    // for the rest of the items, they are computed with the previous one
+    for (var i = 1; i < mArray.length; i++) {
+      emaArray.push(mArray[i] * k + emaArray[i - 1] * (1 - k));
+    }
+    return emaArray;
   }
   
   private formatVolume(data) {

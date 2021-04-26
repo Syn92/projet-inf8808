@@ -47,6 +47,7 @@ export class DataViz3Component implements OnInit {
   }
 
   private displayGraph() {
+    this.tooltip = this.createTooltip()
     this.setupBaseGraph();
     this.setupAxies();
     this.drawVol()
@@ -56,7 +57,6 @@ export class DataViz3Component implements OnInit {
     this.drawLegend()
     this.drawTrend()
     this.drawRect()
-    this.tooltip = this.createTooltip()
     this.tooltipListener(this)
   }
   
@@ -142,7 +142,7 @@ export class DataViz3Component implements OnInit {
       .datum(this.data.btcDom)
       .attr('fill', 'none')
       .attr('stroke', 'orange')
-      .attr('stroke-width', 1)
+      .attr('stroke-width', 1.5)
       .attr('d', d3.line().curve(d3.curveBasis)
         .x(d => this.xScale(d[0]))
         .y(d => this.yScale2(d[1]))
@@ -289,8 +289,7 @@ export class DataViz3Component implements OnInit {
     .on("mouseover", function(){return obj.tooltip.style("visibility", "visible");})
     .on("mousemove", function(event: MouseEvent) {
       const date = obj.xScale.invert(event.clientX - document.getElementById('bg').getBoundingClientRect().x)
-      console.log(obj.total.node().getBBox())
-      return obj.tooltip.style("y", "0px").style("left",(event.pageX)+"px");
+      return obj.tooltip.style("left",(event.pageX)+"px");
     })
     .on("mouseout", function(){return obj.tooltip.style("visibility", "hidden");});
   }
