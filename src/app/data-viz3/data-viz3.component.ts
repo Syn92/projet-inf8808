@@ -197,6 +197,9 @@ export class DataViz3Component implements OnInit {
   }
 
   public onToggle(obj: any, show: boolean){
+    if (typeof obj == 'string' || obj instanceof String){
+      d3.select(`#${obj}`).style("visibility", show ? "visible" : "hidden")
+    } else
       obj.style("visibility", show ? "visible" : "hidden")
   }
 
@@ -216,12 +219,12 @@ export class DataViz3Component implements OnInit {
     var lineGroup = this.svg.append('g')
       .attr('class', 'lines')
       .selectAll('.line-group')
-      .data(this.data).enter()
+      .data(this.data.filter((d) => d.type != 'volume')).enter()
       .append('g')
-      .attr('class', 'line-group')
+      .attr('class', 'line')
 
     lineGroup.append('path')
-      .attr('class', 'line')
+      .attr('id', d => d.type)
       .attr('d', d => {
         return this.LEFT_AXIS.includes(d.type) ? lineLeft(d.values) : lineRight(d.values)
       })
@@ -285,9 +288,6 @@ export class DataViz3Component implements OnInit {
             var xDate = comp.xScale.invert(mouse[0])
             var bisect = d3.bisector(d => d[0]).left 
             var idx = bisect(d["values"], xDate);
-
-
-            // console.log(d['values'][idx])
 
             // return ''
             d3.select(".mouse-line")
