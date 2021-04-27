@@ -3,6 +3,7 @@ import { DataService } from '../data-service.service';
 import { IData } from '../../assets/Interfaces';
 import * as d3Legend from '../../assets/d3-svg-legend'
 import * as d3 from 'd3';
+import {nest} from 'd3-collection'
 
 @Component({
   selector: 'app-data-viz3',
@@ -10,20 +11,23 @@ import * as d3 from 'd3';
   styleUrls: ['./data-viz3.component.scss']
 })
 export class DataViz3Component implements OnInit {
+
+  private readonly RIGHT_AXIS = ['btcDom', 'trend']
+  private readonly LEFT_AXIS = ['global', 'volume', 'btcPrice']
   
-  private data: IData;
+  private data: any;
   public tooltip: any;
   private container;
   private svg;
   private xScale;
   private yScale1;
   private yScale2;
+  private colors
   private offset = 100;
   private margin = 50;
   private containerWidth = 1500;
   private width = 1000 - (this.margin * 2);
   private height = 600 - (this.margin * 2);
-  private test;
 
   public showBtc: boolean = true;
   public showBtcDom: boolean = true;
@@ -47,17 +51,11 @@ export class DataViz3Component implements OnInit {
   }
 
   private displayGraph() {
-    this.tooltip = this.createTooltip()
     this.setupBaseGraph();
     this.setupAxies();
     this.drawVol()
-    this.drawBTC();
-    this.drawBTCDom()
-    this.drawTotMC()
     this.drawLegend()
-    this.drawTrend()
-    this.drawRect()
-    this.tooltipListener(this)
+    this.test(this)
   }
   
   private setupBaseGraph() {
@@ -76,8 +74,7 @@ export class DataViz3Component implements OnInit {
 
   private setupAxies() {
     const date: Date[] = []
-    
-    this.data.btcPrice.forEach(e => {
+    this.data[0].values.forEach(e => {
       date.push(e[0])
     })
 
@@ -88,17 +85,15 @@ export class DataViz3Component implements OnInit {
       .domain([ext[0].setDate(ext[0].getDate() - 1), ext[1].setDate(ext[1].getDate() + 25)])
       .range([0, this.width])
       
-    const maxY1 = d3.max(this.data.global.map(d => parseInt(d[1])))
-    const minY1 = d3.min(this.data.btcPrice.map(d => parseInt(d[1])))
+    const maxY1 = parseInt(d3.max(this.data[0].values.map(d => d[1])))
+    const minY1 = parseInt(d3.min(this.data[2].values.map(d => d[1])))
   
     this.yScale1 = d3.scaleLog()
       .domain([minY1-this.offset, maxY1])
       .range([this.height, this.margin])
 
-    const maxY2 = d3.max(this.data.btcDom.map(d => parseInt(d[1])))
-
     this.yScale2 = d3.scaleLinear()
-      .domain([0, maxY2])
+      .domain([0, 100])
       .range([this.height, this.margin])
 
     // Append axies to svg
@@ -124,49 +119,11 @@ export class DataViz3Component implements OnInit {
       
   }
 
-  private drawBTC() {
-    this.btc = this.svg.append('path')
-      .datum(this.data.btcPrice)
-      .attr('fill', 'none')
-      .attr('stroke', 'indigo')
-      .attr('stroke-width', 1.5)
-      .attr('d', d3.line()
-        .x(d => this.xScale(d[0]))
-        .y(d => this.yScale1(d[1]))
-      )
-  }
-
-  private drawBTCDom() {
-
-    this.btcDom = this.svg.append('path')
-      .datum(this.data.btcDom)
-      .attr('fill', 'none')
-      .attr('stroke', 'orange')
-      .attr('stroke-width', 1.5)
-      .attr('d', d3.line().curve(d3.curveBasis)
-        .x(d => this.xScale(d[0]))
-        .y(d => this.yScale2(d[1]))
-      )
-  }
-
-  private drawTotMC() {
-
-    this.total = this.svg.append('path')
-      .datum(this.data.global)
-      .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
-      .attr('stroke-width', 1.5)
-      .attr('d', d3.line()
-        .x(d => this.xScale(d[0]))
-        .y(d => this.yScale1(d[1]))
-      )
-  }
-
   private drawVol() {
     // Bar Chart of 2 month avg
     let isSmaller = false;
     this.vol = this.svg.selectAll('.bar')
-      .data(this.data.volume['average'])
+      .data(this.data[1].values.average)
       .join('rect')
       .attr('class', 'bar')
       .attr('x', d => this.xScale(d[0]) - 5)
@@ -181,41 +138,6 @@ export class DataViz3Component implements OnInit {
       })
       .style('opacity', 0.35)
       .style('stroke-width', 0.5)
-
-    //uncomment to see line of detailed volume
-    // this.svg.append('path')
-    //   .datum(this.data.volume['detailed'])
-    //   .attr('fill', 'none')
-    //   .attr('stroke', 'green')
-    //   .attr('stroke-width', 1.5)
-    //   .attr('d', d3.line()
-    //     .x(d => this.xScale(d[0]))
-    //     .y(d => this.yScale1(d[1]))
-    //   )
-  }
-
-  private drawTrend() {
-    console.log(this.data.trend)
-    this.trend = this.svg.append('path')
-      .datum(this.data.trend)
-      .attr('fill', 'none')
-      .attr('stroke', 'deeppink')
-      .attr('stroke-width', 1.5)
-      .attr('d', d3.line()
-        .x(d => this.xScale(d['timestamp']))
-        .y(d => this.yScale2(d['value']))
-      )
-  }
-
-  private drawRect() {
-    this.svg.append('rect')
-      .attr('id', 'bg')
-      .attr('x', d => this.xScale(new Date(2014, 0, 1)))
-      .attr('y', d => this.yScale2(100))
-      .attr('z', 1000)
-      .attr('width', this.width)
-      .attr('height', d => this.height - this.margin)
-      .style('opacity', '0')
   }
   
   private drawLegend() {
@@ -274,27 +196,149 @@ export class DataViz3Component implements OnInit {
     return (num / si[i].value).toFixed(digits).replace(regex, "$1") + si[i].symbol;
   }
 
-  private createTooltip(){
-    var tooltip = d3.select("#graph")
-    .append("div")
-    .style("position", "absolute")
-    .style("visibility", "hidden")
-    .text("TOOLTIP TEXT");
-    return tooltip
-  }
-
-  private tooltipListener(obj: DataViz3Component){
-    
-    this.svg.select('#bg')
-    .on("mouseover", function(){return obj.tooltip.style("visibility", "visible");})
-    .on("mousemove", function(event: MouseEvent) {
-      const date = obj.xScale.invert(event.clientX - document.getElementById('bg').getBoundingClientRect().x)
-      return obj.tooltip.style("left",(event.pageX)+"px");
-    })
-    .on("mouseout", function(){return obj.tooltip.style("visibility", "hidden");});
-  }
-
   public onToggle(obj: any, show: boolean){
       obj.style("visibility", show ? "visible" : "hidden")
   }
+
+  private test(comp: DataViz3Component) {
+    comp.colors = d3.scaleOrdinal()
+      .domain(this.LEFT_AXIS.concat(this.RIGHT_AXIS))
+      .range(['#4682B4', 'vol', '#4B0082', '#FFA500', '#FF1493'])
+
+    var lineLeft = d3.line()
+      .x(d => this.xScale(d[0]))
+      .y(d => this.yScale1(d[1]))
+
+    var lineRight = d3.line()
+      .x(d => this.xScale(d[0]))
+      .y(d => this.yScale2(d[1]))
+
+    var lineGroup = this.svg.append('g')
+      .attr('class', 'lines')
+      .selectAll('.line-group')
+      .data(this.data).enter()
+      .append('g')
+      .attr('class', 'line-group')
+
+    lineGroup.append('path')
+      .attr('class', 'line')
+      .attr('d', d => {
+        return this.LEFT_AXIS.includes(d.type) ? lineLeft(d.values) : lineRight(d.values)
+      })
+      .style('stroke', (d) => comp.colors(d.type))
+      .style('stroke-weight', 1.5)
+      .style('fill', 'none')
+
+    comp.tooltip = d3.select("#graph").append('div')
+      .attr('id', 'tooltip')
+      .style('position', 'absolute')
+      .style('background-color', '#D3D3D3')
+      .style('padding', 6)
+      .style('display', 'none')
+
+    var mouseGroup = this.svg.append('g')
+      .attr('class', 'mouse-over-effects')
+
+    mouseGroup.append('path')
+      .attr('class', 'mouse-line')
+      .style('stroke', '#A9A9A9')
+      .style("stroke-width", 2)
+      .style("opacity", "0");
+
+    var lines = document.getElementsByClassName('line');
+
+    var mousePerLine = mouseGroup.selectAll('.mouse-per-line')
+      .data(this.data)
+      .enter()
+      .append("g")
+      .attr("class", "mouse-per-line");
+
+    mouseGroup.append('svg:rect')
+      .attr('width', this.width) 
+      .attr('height', this.height)
+      .attr('fill', 'none')
+      .attr('pointer-events', 'all')
+      .on('mouseout', function () { // on mouse out hide line, circles and text
+        d3.select(".mouse-line")
+          .style("opacity", "0");
+        d3.selectAll(".mouse-per-line text")
+          .style("opacity", "0");
+        d3.selectAll("#tooltip")
+          .style('display', 'none')
+
+      })
+      .on('mouseover', function () { // on mouse in show line, circles and text
+        d3.select(".mouse-line")
+          .style("opacity", "1");
+        d3.selectAll("#tooltip")
+          .style('display', 'block')
+      })
+      .on('mousemove', function (event: MouseEvent) { // update tooltip content, line, circles and text when mouse moves
+        var mouse = d3.pointer(event)
+
+        d3.selectAll(".mouse-per-line")
+          .attr("transform", (d, i) => {
+
+            if (d['type'] == 'volume')
+              return ''
+
+            var xDate = comp.xScale.invert(mouse[0])
+            var bisect = d3.bisector(d => d[0]).left 
+            var idx = bisect(d["values"], xDate);
+
+
+            // console.log(d['values'][idx])
+
+            // return ''
+            d3.select(".mouse-line")
+              .attr("d", function () {
+                var data = "M" + comp.xScale(d['values'][idx][0]) + "," + 500;
+                data += " " + comp.xScale(d['values'][idx][0]) + "," + 0;
+                return data;
+              });
+
+            const x = comp.xScale(d['values'][idx][0])
+            const y = comp.LEFT_AXIS.includes(d['type']) ? comp.yScale1(d['values'][idx][1]) : comp.yScale2(d['values'][idx][1])
+            return `translate(${x}, ${y})`;
+          });
+
+        comp.updateTooltipContent(mouse, comp.data, comp, event)
+
+      })
+  }
+
+  private updateTooltipContent(mouse, data, comp: DataViz3Component, mouseEvent: MouseEvent) {
+
+    var mouseValues = []
+    data.map(d => {
+      if (d['type'] == 'volume')
+        return ''
+
+      var xDate = comp.xScale.invert(mouse[0])
+      var bisect = d3.bisector(d => d[0]).left
+      var idx = bisect(d.values, xDate)
+      mouseValues.push({key: d.type, date: d.values[idx][0], price: d.values[idx][1]})
+    })
+
+    var sortingArr = mouseValues.map(d=> d.key)
+
+    comp.tooltip.html(`${mouseValues[0].date.getFullYear()}-${mouseValues[0].date.getMonth() + 1}-${mouseValues[0].date.getDay()}`)
+      .style('display', 'block')
+      .style('font-size', 11.5)
+      .selectAll()
+      .data(mouseValues).enter() // for each vehicle category, list out name and price of premium
+      .append('div')
+      .style('color', d => {
+        return comp.colors(d.key)
+      })
+      .style('font-size', 10)
+      .html(d => {
+        return `${d.key}: ${d.price}`
+      })
+
+    comp.tooltip
+      .style("left",(mouseEvent.pageX + 20)+"px")
+      .style("top",(mouseEvent.pageY + 20)+"px")
+  }
+
 }

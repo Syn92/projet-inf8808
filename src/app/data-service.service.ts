@@ -158,19 +158,17 @@ export class DataService {
     }
 
     let trend = res[3].map(e => {
-      return {
-        timestamp: new Date(e.Month),
-        value: e.bitcoin
-      }
+      return [new Date(e.Month), e.bitcoin]
     })
     
-    return {
-      global: global,
-      volume: volume,
-      btcPrice: btcPrice,
-      btcDom: btcDom,
-      trend: trend
-    }
+    return [
+      {type: "global", values: global},
+      {type: "volume", values: volume},
+      {type: "btcPrice", values: btcPrice},
+      {type: "btcDom", values: btcDom},
+      {type: "trend", values: trend},
+      
+    ]
   }
 
   private EMACalc(mArray,mRange) {
