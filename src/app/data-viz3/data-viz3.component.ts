@@ -206,7 +206,7 @@ export class DataViz3Component implements OnInit {
   private test(comp: DataViz3Component) {
     comp.colors = d3.scaleOrdinal()
       .domain(this.LEFT_AXIS.concat(this.RIGHT_AXIS))
-      .range(['#4682B4', 'vol', '#4B0082', '#FFA500', '#FF1493'])
+      .range(['#4682B4', '#A6D3A6', '#4B0082', '#FFA500', '#FF1493'])
 
     var lineLeft = d3.line()
       .x(d => this.xScale(d[0]))
@@ -289,7 +289,6 @@ export class DataViz3Component implements OnInit {
             var bisect = d3.bisector(d => d[0]).left 
             var idx = bisect(d["values"], xDate);
 
-            // return ''
             d3.select(".mouse-line")
               .attr("d", function () {
                 var data = "M" + comp.xScale(d['values'][idx][0]) + "," + 500;
@@ -311,16 +310,17 @@ export class DataViz3Component implements OnInit {
 
     var mouseValues = []
     data.map(d => {
-      if (d['type'] == 'volume')
-        return ''
-
       var xDate = comp.xScale.invert(mouse[0])
       var bisect = d3.bisector(d => d[0]).left
-      var idx = bisect(d.values, xDate)
-      mouseValues.push({key: d.type, date: d.values[idx][0], price: d.values[idx][1]})
-    })
 
-    var sortingArr = mouseValues.map(d=> d.key)
+      if (d['type'] == 'volume'){
+        var idx = bisect(d.values.average, xDate)
+        mouseValues.push({key: d.type, date: d.values.average[idx][0], price: d.values.average[idx][1]})
+      } else {
+        var idx = bisect(d.values, xDate)
+        mouseValues.push({key: d.type, date: d.values[idx][0], price: d.values[idx][1]})
+      }
+    })
 
     comp.tooltip.html(`${mouseValues[0].date.getFullYear()}-${mouseValues[0].date.getMonth() + 1}-${mouseValues[0].date.getDay()}`)
       .style('display', 'block')
