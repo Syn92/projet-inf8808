@@ -5,6 +5,8 @@ import * as d3Legend from '../../assets/d3-svg-legend'
 import * as d3 from 'd3';
 import {nest} from 'd3-collection'
 
+const pinIcon: string = "m12 0c-4.962 0-9 4.066-9 9.065 0 7.103 8.154 14.437 8.501 14.745.143.127.321.19.499.19s.356-.063.499-.189c.347-.309 8.501-7.643 8.501-14.746 0-4.999-4.038-9.065-9-9.065zm0 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z"
+
 @Component({
   selector: 'app-data-viz3',
   templateUrl: './data-viz3.component.html',
@@ -55,7 +57,8 @@ export class DataViz3Component implements OnInit {
     this.setupAxies();
     this.drawVol()
     this.drawLegend()
-    this.test(this)
+    this.displayLines(this)
+    this.drawCycle()
   }
   
   private setupBaseGraph() {
@@ -176,6 +179,64 @@ export class DataViz3Component implements OnInit {
       .call(legendRight)
   }
 
+  private drawCycle() {
+
+    const cycles = [
+      {
+        type: 'bull',
+        start: new Date(2013, 11, 31),
+        end: new Date(2014, 5, 9)
+      },
+      {
+        type: 'bear',
+        start: new Date(2014, 5, 10),
+        end: new Date(2016, 6, 8)
+      },
+      {
+        type: 'bull',
+        start: new Date(2016, 6, 9),
+        end: new Date(2018, 1, 14)
+      },
+      {
+        type: 'bear',
+        start: new Date(2018, 1, 15),
+        end: new Date(2020, 4, 10)
+      },
+      {
+        type: 'bull',
+        start: new Date(2020, 4, 11),
+        end: new Date(2021, 3, 7)
+      }
+    ]
+    
+    const te = this.svg.selectAll('.cycle')
+      .data(cycles)
+      .enter().append('g')
+      .attr('class', 'cycle')
+      
+      te.append('rect')
+      .attr('x', d => this.xScale(d.start))
+      .attr('y', 0)
+      .attr('width', d => this.xScale(d.end) - this.xScale(d.start))
+      .attr('height', 18)
+      .style('fill', d => {
+        return d.type == 'bear' ? 'indianred' : 'mediumspringgreen'
+      })
+      
+      te.append('text')
+      .attr('x', d => this.xScale(d.start) + ((this.xScale(d.end)- this.xScale(d.start))/2))
+      .attr('y', 14)
+      .attr('text-anchor', 'middle')
+      .text(d => d.type)
+
+      te.append('path')
+      .attr('d', pinIcon )
+      
+      
+      // .style('opacity', 0.35)
+      // .style('stroke-width', 0.5)
+  }
+
 
   // Formats number ex: 10000 => 10K
   private nFormatter(num, digits) {
@@ -203,7 +264,7 @@ export class DataViz3Component implements OnInit {
       obj.style("visibility", show ? "visible" : "hidden")
   }
 
-  private test(comp: DataViz3Component) {
+  private displayLines(comp: DataViz3Component) {
     comp.colors = d3.scaleOrdinal()
       .domain(this.LEFT_AXIS.concat(this.RIGHT_AXIS))
       .range(['#4682B4', '#A6D3A6', '#4B0082', '#FFA500', '#FF1493'])
@@ -235,7 +296,7 @@ export class DataViz3Component implements OnInit {
     comp.tooltip = d3.select("#graph").append('div')
       .attr('id', 'tooltip')
       .style('position', 'absolute')
-      .style('background-color', '#D3D3D3')
+      .style('background-color', 'rgba(122, 122, 122)')
       .style('padding', 6)
       .style('display', 'none')
 
@@ -282,7 +343,7 @@ export class DataViz3Component implements OnInit {
         d3.selectAll(".mouse-per-line")
           .attr("transform", (d, i) => {
 
-            if (d['type'] == 'volume')
+            if (d['type'] == 'volume' || d['type'] == "trend")
               return ''
 
             var xDate = comp.xScale.invert(mouse[0])
@@ -295,18 +356,14 @@ export class DataViz3Component implements OnInit {
                 data += " " + comp.xScale(d['values'][idx][0]) + "," + 0;
                 return data;
               });
-
-            const x = comp.xScale(d['values'][idx][0])
-            const y = comp.LEFT_AXIS.includes(d['type']) ? comp.yScale1(d['values'][idx][1]) : comp.yScale2(d['values'][idx][1])
-            return `translate(${x}, ${y})`;
           });
 
-        comp.updateTooltipContent(mouse, comp.data, comp, event)
+        comp.updateTooltip(mouse, comp.data, comp, event)
 
       })
   }
 
-  private updateTooltipContent(mouse, data, comp: DataViz3Component, mouseEvent: MouseEvent) {
+  private updateTooltip(mouse, data, comp: DataViz3Component, mouseEvent: MouseEvent) {
 
     var mouseValues = []
     data.map(d => {
@@ -322,7 +379,7 @@ export class DataViz3Component implements OnInit {
       }
     })
 
-    comp.tooltip.html(`${mouseValues[0].date.getFullYear()}-${mouseValues[0].date.getMonth() + 1}-${mouseValues[0].date.getDay()}`)
+    comp.tooltip.html(`<span id="title">Date: ${mouseValues[0].date.getDate()}-${mouseValues[0].date.getMonth() + 1}-${mouseValues[0].date.getFullYear()}</span>`)
       .style('display', 'block')
       .style('font-size', 11.5)
       .selectAll()
@@ -333,7 +390,7 @@ export class DataViz3Component implements OnInit {
       })
       .style('font-size', 10)
       .html(d => {
-        return `${d.key}: ${d.price}`
+        return `${d.key}: ${Math.floor(d.price)}`
       })
 
     comp.tooltip
