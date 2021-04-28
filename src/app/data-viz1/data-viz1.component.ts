@@ -179,7 +179,7 @@ export class DataViz1Component implements OnInit {
 
   var colorScale = d3
     .scaleLinear<string>()
-    .domain([-65, -2, 0, 2, 25])
+    .domain([-65, -2, 0, 2, 20])
     .range(["DarkRed", "IndianRed", "DarkSeaGreen", "Chartreuse", "DarkGreen"])
     svg
       .selectAll("rect")
