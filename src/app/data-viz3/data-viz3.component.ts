@@ -229,7 +229,13 @@ export class DataViz3Component implements OnInit {
       .attr('text-anchor', 'middle')
       .text(d => d.type)
 
-      te.append('path')
+      te.append('svg') 
+        .attr('x', d => this.xScale(d.start)- 10)
+        .attr('y', '-30')
+        .on('mouseover', function (d) {
+          // hover
+        })
+      .append('path')
       .attr('d', pinIcon )
       
       

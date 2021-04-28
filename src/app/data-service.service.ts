@@ -156,7 +156,7 @@ export class DataService {
     for (let i = 0; i < btcDom.length; i++) {
       btcDom[i][1] = btcDomSmoothed[i]
     }
-
+    
     let trend = res[3].map(e => {
       return [new Date(e.Month), e.bitcoin]
     })
