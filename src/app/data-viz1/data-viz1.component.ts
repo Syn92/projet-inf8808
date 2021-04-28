@@ -87,9 +87,39 @@ export class DataViz1Component implements OnInit {
     this.createSVG('1b', '2018')
     this.createSVG('1c', '2021')
 
+    this.createLegend();
+
     this.marketCap2014 = Math.ceil(this.coinLists['2014']['market_cap']/1000000000)
     this.marketCap2018 = Math.ceil(this.coinLists['2018']['market_cap']/1000000000)
     this.marketCap2021 = Math.ceil(this.coinLists['2021']['market_cap']/1000000000)
+  }
+
+  private createLegend(): void {
+    const svg = d3.select('#legend1')
+      .append("svg")
+      .attr("width", '100%')
+    const defs = svg.append("defs")
+    const gradient = defs.append('linearGradient')
+      .attr("id", "linear-gradient")
+
+      gradient.selectAll("stop")
+      .data([
+        {offset: "0%", color: "DarkRed"},
+        {offset: "25%", color: "IndianRed"},
+        {offset: "50%", color: "DarkSeaGreen"},
+        {offset: "75%", color: "Chartreuse"},
+        {offset: "100%", color: "DarkGreen"}
+      ])
+      .enter().append("stop")
+      .attr("offset", function(d) { return d.offset; })
+      .attr("stop-color", function(d) { return d.color; });
+
+
+    svg.append("rect")
+    .attr("width", 1000)
+    .attr("height", 20)
+    .attr('x', 350)
+    .style("fill", "url(#linear-gradient)");  
   }
 
   private createSVG(id: string, year: string) {
@@ -148,7 +178,7 @@ export class DataViz1Component implements OnInit {
 
   var colorScale = d3
     .scaleLinear<string>()
-    .domain([-50, -2, 0, 2, 25])
+    .domain([-65, -2, 0, 2, 25])
     .range(["DarkRed", "IndianRed", "DarkSeaGreen", "Chartreuse", "DarkGreen"])
     svg
       .selectAll("rect")
