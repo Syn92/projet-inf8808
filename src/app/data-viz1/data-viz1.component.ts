@@ -108,7 +108,7 @@ export class DataViz1Component implements OnInit {
         {offset: "0%", color: "DarkRed"},
         {offset: "25%", color: "IndianRed"},
         {offset: "50%", color: "DarkSeaGreen"},
-        {offset: "75%", color: "Chartreuse"},
+        {offset: "60%", color: "Chartreuse"},
         {offset: "100%", color: "DarkGreen"}
       ])
       .enter().append("stop")
