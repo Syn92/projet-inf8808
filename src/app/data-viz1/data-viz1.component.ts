@@ -98,6 +98,7 @@ export class DataViz1Component implements OnInit {
     const svg = d3.select('#legend1')
       .append("svg")
       .attr("width", '100%')
+      .attr("height", '20px')
     const defs = svg.append("defs")
     const gradient = defs.append('linearGradient')
       .attr("id", "linear-gradient")
@@ -129,7 +130,7 @@ export class DataViz1Component implements OnInit {
   private display(id: string, year: string, comp: DataViz1Component): void {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
     width = 500 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
+    height = 650 - margin.top - margin.bottom;
     
     var svg = d3.select(`#graph${id}`)
     .append("svg")
