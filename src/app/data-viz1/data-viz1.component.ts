@@ -40,7 +40,7 @@ export class DataViz1Component implements OnInit {
   tooltip1b;
   tooltip1c;
 
-  currentRect;
+  currentElement;
 
   displaySpinner = true;
   coinLists = {}
@@ -87,9 +87,9 @@ export class DataViz1Component implements OnInit {
     this.createSVG('1b', '2018')
     this.createSVG('1c', '2021')
 
-    this.marketCap2014 = this.coinLists['2014']['market_cap']
-    this.marketCap2018 = this.coinLists['2018']['market_cap']
-    this.marketCap2021 = this.coinLists['2021']['market_cap']
+    this.marketCap2014 = Math.ceil(this.coinLists['2014']['market_cap']/1000000000)
+    this.marketCap2018 = Math.ceil(this.coinLists['2018']['market_cap']/1000000000)
+    this.marketCap2021 = Math.ceil(this.coinLists['2021']['market_cap']/1000000000)
   }
 
   private createSVG(id: string, year: string) {
@@ -155,17 +155,15 @@ export class DataViz1Component implements OnInit {
       .data(root.leaves())
       .enter()
       .append("rect")
-        .attr('id', function(d:any) { return `Y${d.parent.data.coin}R${d.data.rank}`})
-        .attr('class', function(d:any) {return `rank${d.data.rank}`})
+        .attr('id', function(d:any) {return `rank${d.data.coin}`})
         .attr('x', function (d:any) { return d.x0; })
         .attr('y', function (d:any) { return d.y0; })
         .attr('width', function (d:any) { return d.x1 - d.x0; })
         .attr('height', function (d:any) { return d.y1 - d.y0; })
         .style("stroke", "black")
-        // .attr("stroke-width", 1)
         .attr("fill", function (d:any) { return colorScale(d.data.growth)})
         .on("mouseover", function(event: any, el: any) {
-          comp.thiccRect(d3.select(this), comp)
+          comp.thiccRect(d3.select(this), this, comp)
           d3.select(`#tooltip${id}`).style('display', 'block')
         })
         .on("mouseout", function(d:any) {
@@ -193,7 +191,7 @@ export class DataViz1Component implements OnInit {
         }) 
         .attr("fill", "white")
         .on("mouseover", function() {
-          comp.thiccRect(undefined, comp)
+          comp.thiccRect(undefined, this, comp)
           d3.select(`#tooltip${id}`).style('display', 'block')
         })
         .on("mouseout", function(d:any) {
@@ -205,16 +203,33 @@ export class DataViz1Component implements OnInit {
         })
   }
 
-  public thiccRect(rect, comp: DataViz1Component): void {
+  public thiccRect(rect, element, comp: DataViz1Component): void {
+    const listGraphs = ['1a', '1b', '1c']
+
     if (rect !== undefined)
-      comp.currentRect = rect
-    comp.currentRect.attr("stroke-width", 3)
-    comp.currentRect.style("opacity", "0.7");
+      comp.currentElement = element
+
+    listGraphs.forEach(id => {
+      const svg = d3.select(`#graph${id}`)
+      svg.selectAll(`#${comp.currentElement.id}`)
+        .style("opacity", "0.7")
+        .attr("stroke-width", 5)
+        .style("stroke", "red")
+    }) 
+    
   }
 
   public unthiccRect(comp: DataViz1Component): void {
-    comp.currentRect.attr("stroke-width", 1)
-    comp.currentRect.style("opacity", "1");
+    const listGraphs = ['1a', '1b', '1c']
+
+    listGraphs.forEach(id => {
+      const svg = d3.select(`#graph${id}`)
+      svg.selectAll(`#${comp.currentElement.id}`)
+        .style("opacity", "1")
+        .attr("stroke-width", 1)
+        .style("stroke", "black")
+    }) 
+
   }
   
   public updateToolTip(id: string, mouseEvent, data, comp: DataViz1Component): void {
@@ -227,26 +242,22 @@ export class DataViz1Component implements OnInit {
       currentToolTip = comp.tooltip1c
     }
 
-    console.log(data)
-
     currentToolTip.html
         (`<span id="title">
-          <p>Name: ${data.coin}</p> 
-          <p style="color:${data.growth >= 0 ? "green":"red"}">Growth: ${data.growth}%</p>
-          <p>Rank: ${data.rank}</p> 
+          <p>Nom: ${data.coin}</p> 
+          <p style="color:${data.growth >= 0 ? "green":"red"}">Croissance: ${data.growth}%</p>
+          <p>Rang: ${data.rank}</p> 
+          <p>Capitalisation: ${(data.market_cap/1000000000).toFixed(2)}$ Milliards</p> 
         </span>`)
       .style('display', 'block')
       .style('font-size', 11.5)
       .selectAll()
-      .data(data).enter() // for each vehicle category, list out name and price of premium
+      .data(data).enter()
       .append('div')
-      .style('color', d => {
-        // return comp.colors(d.key)
-    })
-    .style('font-size', 10)
-    .html(d => {
-      return `${d.key}: ${Math.floor(d.price)}`
-    })
+      .style('font-size', 10)
+      .html(d => {
+        return `${d.key}: ${Math.floor(d.price)}`
+      })
 
     currentToolTip
     .style("left",(mouseEvent.pageX + 20)+"px")
