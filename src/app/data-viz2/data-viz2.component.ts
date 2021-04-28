@@ -66,7 +66,7 @@ export class DataViz2Component implements OnInit {
       .call(d3.axisBottom(x));
 
     // Add Y axis
-    var y = d3.scaleLog()
+    var y = d3.scaleLinear()
       .domain([d3.min(this.cherryPickDates, function(d) { return +d.btc_price; }), d3.max(this.cherryPickDates, function(d) { return +d.btc_price; })])
       .range([ height, 0 ]);
     svg.append("g")

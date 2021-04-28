@@ -36,7 +36,11 @@ const symbols = {
 })
 export class DataViz1Component implements OnInit {
 
-  tooltip = undefined;
+  tooltip1a;
+  tooltip1b;
+  tooltip1c;
+
+  currentRect;
 
   displaySpinner = true;
   coinLists = {}
@@ -63,7 +67,6 @@ export class DataViz1Component implements OnInit {
       this.findSymbol();
       this.findGrowth()
       console.log(this.coinLists);
-      this.setupToolTip();
       this.displayGraph();
 
     });
@@ -79,46 +82,62 @@ export class DataViz1Component implements OnInit {
     }
   }
 
-  private setupToolTip(): void {
-    this.tooltip = d3.select(".tooltip")
-    .append("div")
-      .style("position", "absolute")
-      .style("visibility", "hidden")
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "10px")
-  
-  }
-
   private displayGraph(): void {
-    this.createSVG('#graph1a', '2014', this.tooltip)
-    this.createSVG('#graph1b', '2018', this.tooltip)
-    this.createSVG('#graph1c', '2021', this.tooltip)
+    this.createSVG('1a', '2014')
+    this.createSVG('1b', '2018')
+    this.createSVG('1c', '2021')
 
     this.marketCap2014 = this.coinLists['2014']['market_cap']
     this.marketCap2018 = this.coinLists['2018']['market_cap']
     this.marketCap2021 = this.coinLists['2021']['market_cap']
   }
 
-  private createSVG(id: string, year: string, tooltip: any) {
+  private createSVG(id: string, year: string) {
+    this.display(id, year, this);
+  }
+
+  private display(id: string, year: string, comp: DataViz1Component): void {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
     width = 500 - margin.left - margin.right,
     height = 700 - margin.top - margin.bottom;
     
-    var svg = d3.select(id)
+    var svg = d3.select(`#graph${id}`)
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
-          
+
+    if (id == '1a') {
+      comp.tooltip1a = d3.select(`#graph${id}`).append('div')
+      .attr('id', `tooltip${id}`)
+      .style('position', 'absolute')
+      .style('background-color', 'rgba(230, 230, 230)')
+      .style('padding', 6)
+      .style('display', 'none')
+    }
+    else if (id == '1b') {
+      comp.tooltip1b = d3.select(`#graph${id}`).append('div')
+      .attr('id', `tooltip${id}`)
+      .style('position', 'absolute')
+      .style('background-color', 'rgba(230, 230, 230)')
+      .style('padding', 6)
+      .style('display', 'none')
+    } 
+    else {
+      comp.tooltip1c = d3.select(`#graph${id}`).append('div')
+      .attr('id', `tooltip${id}`)
+      .style('position', 'absolute')
+      .style('background-color', 'rgba(230, 230, 230)')
+      .style('padding', 6)
+      .style('display', 'none')
+    }
+
     var root = d3.stratify()
-      .id(function(d:any) { return d.coin; })
-      .parentId(function(d:any) { return d.parent; })(this.coinLists[year]['coins'])
-    
+    .id(function(d:any) { return d.coin; })
+    .parentId(function(d:any) { return d.parent; })(comp.coinLists[year]['coins'])
+  
     root.sum(function(d:any) { return d.market_cap })
     
     d3.treemap()
@@ -127,14 +146,10 @@ export class DataViz1Component implements OnInit {
       .padding(4)
       (root)
 
-    var colorScale = d3
-      .scaleLinear<string>()
-      .domain([-80, -2, 2, 80])
-      .range(["DarkRed", "IndianRed", "LightGreen", "Chartreuse"])
-
-    // const g = 
-    // const tip = d3Tip.tip().attr('class', 'd3-tip').html(function (d) { return tooltip.getContents(d) })
-    
+  var colorScale = d3
+    .scaleLinear<string>()
+    .domain([-50, -2, 0, 2, 25])
+    .range(["DarkRed", "IndianRed", "DarkSeaGreen", "Chartreuse", "DarkGreen"])
     svg
       .selectAll("rect")
       .data(root.leaves())
@@ -147,21 +162,19 @@ export class DataViz1Component implements OnInit {
         .attr('width', function (d:any) { return d.x1 - d.x0; })
         .attr('height', function (d:any) { return d.y1 - d.y0; })
         .style("stroke", "black")
+        // .attr("stroke-width", 1)
         .attr("fill", function (d:any) { return colorScale(d.data.growth)})
-        .on("mouseover", function(d:any) {
-          // console.log(this);
-          
-          // tooltip.style("visibility", "visible")
-          // tooltip.html(
-          //   `<p>${d.data.coin}</p>` +
-          //   "<img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'></img>" +
-          //   "<br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
+        .on("mouseover", function(event: any, el: any) {
+          comp.thiccRect(d3.select(this), comp)
+          d3.select(`#tooltip${id}`).style('display', 'block')
         })
         .on("mouseout", function(d:any) {
-          // tooltip.style("visibility", "hidden")
+          comp.unthiccRect(comp)
+          d3.select(`#tooltip${id}`).style('display', 'none')
         })
-
-
+        .on("mousemove", function(event: any, el:any) {          
+          comp.updateToolTip(id, event, el.data, comp)
+        })
 
     svg
       .selectAll("text")
@@ -179,12 +192,65 @@ export class DataViz1Component implements OnInit {
           return String((100 * (d.x1 - d.x0) / width)) + "px"
         }) 
         .attr("fill", "white")
-        .on("mouseover", function(d:any) {
-          tooltip.style("visibility", "visible")
+        .on("mouseover", function() {
+          comp.thiccRect(undefined, comp)
+          d3.select(`#tooltip${id}`).style('display', 'block')
         })
         .on("mouseout", function(d:any) {
-          tooltip.style("visibility", "hidden")
+          comp.unthiccRect(comp)
+          d3.select(`#tooltip${id}`).style('display', 'none')
         })
+        .on("mousemove", function(event: any, el:any) {          
+          comp.updateToolTip(id, event, el.data, comp)
+        })
+  }
+
+  public thiccRect(rect, comp: DataViz1Component): void {
+    if (rect !== undefined)
+      comp.currentRect = rect
+    comp.currentRect.attr("stroke-width", 3)
+    comp.currentRect.style("opacity", "0.7");
+  }
+
+  public unthiccRect(comp: DataViz1Component): void {
+    comp.currentRect.attr("stroke-width", 1)
+    comp.currentRect.style("opacity", "1");
+  }
+  
+  public updateToolTip(id: string, mouseEvent, data, comp: DataViz1Component): void {
+    let currentToolTip = comp.tooltip1a
+    
+    if (id === '1b') {
+      currentToolTip = comp.tooltip1b
+    }
+    else if (id === "1c") {
+      currentToolTip = comp.tooltip1c
+    }
+
+    console.log(data)
+
+    currentToolTip.html
+        (`<span id="title">
+          <p>Name: ${data.coin}</p> 
+          <p style="color:${data.growth >= 0 ? "green":"red"}">Growth: ${data.growth}%</p>
+          <p>Rank: ${data.rank}</p> 
+        </span>`)
+      .style('display', 'block')
+      .style('font-size', 11.5)
+      .selectAll()
+      .data(data).enter() // for each vehicle category, list out name and price of premium
+      .append('div')
+      .style('color', d => {
+        // return comp.colors(d.key)
+    })
+    .style('font-size', 10)
+    .html(d => {
+      return `${d.key}: ${Math.floor(d.price)}`
+    })
+
+    currentToolTip
+    .style("left",(mouseEvent.pageX + 20)+"px")
+    .style("top",(mouseEvent.pageY + 20)+"px")
   }
 
   async getFolder(): Promise<string> {
