@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+  import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service.service';  
 import { IData } from '../../assets/Interfaces';
 import * as d3Legend from '../../assets/d3-svg-legend'
@@ -18,7 +18,8 @@ export class DataViz3Component implements OnInit {
   private readonly LEFT_AXIS = ['global', 'volume', 'btcPrice']
   
   private data: any;
-  public tooltip: any;
+  private pinTooltip: any
+  public  graphTooltip: any;
   private container;
   private svg;
   private xScale;
@@ -180,34 +181,45 @@ export class DataViz3Component implements OnInit {
   }
 
   private drawCycle() {
-
+    const self = this
     const cycles = [
       {
         type: 'bull',
+        tooltipText: "Premiers stades du bitcoin",
         start: new Date(2013, 11, 31),
         end: new Date(2014, 5, 9)
       },
       {
         type: 'bear',
+        tooltipText: "Le marché devient baissier avec un bitcoin ayant atteint les 1 150$",
         start: new Date(2014, 5, 10),
         end: new Date(2016, 6, 8)
       },
       {
         type: 'bull',
+        tooltipText: "Le marché est haussier et le mouvement est amplifié par le halving du bitcoin" ,
         start: new Date(2016, 6, 9),
-        end: new Date(2018, 1, 14)
+        end: new Date(2018, 0, 10)
       },
       {
         type: 'bear',
-        start: new Date(2018, 1, 15),
+        tooltipText: "Le marché redevient baissier après avoir été en zone de surévaluation, avec un Bitcoin ayant atteint les 17 000$",
+        start: new Date(2018, 0, 11),
         end: new Date(2020, 4, 10)
       },
       {
         type: 'bull',
+        tooltipText: "Un nouveau halving du bitcoin, indicateur d'un nouveau cycle haussier, propulse le marché à la hausse",
         start: new Date(2020, 4, 11),
         end: new Date(2021, 3, 7)
       }
     ]
+
+    this.pinTooltip = d3.select("#graph").append('div')
+      .attr('class', 'pinTooltip')
+      .style('position', 'absolute')
+      .style('display', 'none')
+      .text('tooltip text');
     
     const te = this.svg.selectAll('.cycle')
       .data(cycles)
@@ -229,18 +241,25 @@ export class DataViz3Component implements OnInit {
       .attr('text-anchor', 'middle')
       .text(d => d.type)
 
-      te.append('svg') 
+      te.append('svg')
         .attr('x', d => this.xScale(d.start)- 10)
-        .attr('y', '-30')
-        .on('mouseover', function (d) {
+        .attr('y', '-25')
+        // .attr('pointer-events', 'visible')
+        .on('mouseenter', (event: MouseEvent, d) => {
           // hover
+          console.log(event)
+          self.pinTooltip
+          .style('display', 'block')
+          .style('left', (event.pageX) + "px")
+          .style('top', (event.pageY) + "px")
+          
+        })
+        .on('mouseleave', () => {
+          self.pinTooltip.style('display', 'none')
         })
       .append('path')
       .attr('d', pinIcon )
       
-      
-      // .style('opacity', 0.35)
-      // .style('stroke-width', 0.5)
   }
 
 
@@ -265,7 +284,11 @@ export class DataViz3Component implements OnInit {
 
   public onToggle(obj: any, show: boolean){
     if (typeof obj == 'string' || obj instanceof String){
-      d3.select(`#${obj}`).style("visibility", show ? "visible" : "hidden")
+      d3.select(`#${obj}`)
+      .attr('stroke-dashoffset',(d,i,e) => {return show ? e.length : 0})
+      .attr("stroke-dasharray", (d,i,e) => {return show ? e.length : 0})
+
+      // .style("stroke-dashoffset", show ? "visible" : "hidden")
     } else
       obj.style("visibility", show ? "visible" : "hidden")
   }
@@ -289,8 +312,9 @@ export class DataViz3Component implements OnInit {
       .data(this.data.filter((d) => d.type != 'volume')).enter()
       .append('g')
       .attr('class', 'line')
+      
 
-    lineGroup.append('path')
+    const path = lineGroup.append('path')
       .attr('id', d => d.type)
       .attr('d', d => {
         return this.LEFT_AXIS.includes(d.type) ? lineLeft(d.values) : lineRight(d.values)
@@ -298,8 +322,15 @@ export class DataViz3Component implements OnInit {
       .style('stroke', (d) => comp.colors(d.type))
       .style('stroke-weight', 1.5)
       .style('fill', 'none')
+      .attr("stroke-dashoffset", (d, i, e) => e[i].getTotalLength())
+      .attr("stroke-dasharray", (d, i, e) => e[i].getTotalLength())
+      .transition(d3
+        .transition()
+        .ease(d3.easeSin)
+        .duration(2000))
+      .attr("stroke-dashoffset", 0);
 
-    comp.tooltip = d3.select("#graph").append('div')
+    comp.graphTooltip = d3.select("#graph").append('div')
       .attr('id', 'tooltip')
       .style('position', 'absolute')
       .style('background-color', 'rgba(122, 122, 122)')
@@ -385,7 +416,7 @@ export class DataViz3Component implements OnInit {
       }
     })
 
-    comp.tooltip.html(`<span id="title">Date: ${mouseValues[0].date.getDate()}-${mouseValues[0].date.getMonth() + 1}-${mouseValues[0].date.getFullYear()}</span>`)
+    comp.graphTooltip.html(`<span id="title">Date: ${mouseValues[0].date.getDate()}-${mouseValues[0].date.getMonth() + 1}-${mouseValues[0].date.getFullYear()}</span>`)
       .style('display', 'block')
       .style('font-size', 11.5)
       .selectAll()
@@ -399,7 +430,7 @@ export class DataViz3Component implements OnInit {
         return `${d.key}: ${Math.floor(d.price)}`
       })
 
-    comp.tooltip
+    comp.graphTooltip
       .style("left",(mouseEvent.pageX + 20)+"px")
       .style("top",(mouseEvent.pageY + 20)+"px")
   }
