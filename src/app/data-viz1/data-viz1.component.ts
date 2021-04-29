@@ -98,7 +98,7 @@ export class DataViz1Component implements OnInit {
     const svg = d3.select('#legend1')
       .append("svg")
       .attr("width", '100%')
-      .attr("height", '20px')
+      .attr("height", '80px')
     const defs = svg.append("defs")
     const gradient = defs.append('linearGradient')
       .attr("id", "linear-gradient")
@@ -120,7 +120,32 @@ export class DataViz1Component implements OnInit {
     .attr("width", 1000)
     .attr("height", 20)
     .attr('x', 350)
+    .attr('y', 35)
     .style("fill", "url(#linear-gradient)");  
+
+    svg.append('text')
+    .attr('x', 630)
+    .attr('y', 25)
+    .text(d => "Changement de la valeur selon la dernière année évaluée")
+    .attr("font-size", 18)
+
+    svg.append('text')
+    .attr('x', 335)
+    .attr('y', 70)
+    .text(d => "-65%")
+    .attr("font-size", 16)
+
+    svg.append('text')
+    .attr('x', 860)
+    .attr('y', 70)
+    .text(d => "0%")
+    .attr("font-size", 16)
+
+    svg.append('text')
+    .attr('x', 1340)
+    .attr('y', 70)
+    .text(d => "16%")
+    .attr("font-size", 16)
   }
 
   private createSVG(id: string, year: string) {
@@ -130,7 +155,7 @@ export class DataViz1Component implements OnInit {
   private display(id: string, year: string, comp: DataViz1Component): void {
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
     width = 500 - margin.left - margin.right,
-    height = 650 - margin.top - margin.bottom;
+    height = 600 - margin.top - margin.bottom;
     
     var svg = d3.select(`#graph${id}`)
     .append("svg")
