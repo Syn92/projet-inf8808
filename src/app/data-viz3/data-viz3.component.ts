@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 import {nest} from 'd3-collection'
 
 const pinIcon: string = "m12 0c-4.962 0-9 4.066-9 9.065 0 7.103 8.154 14.437 8.501 14.745.143.127.321.19.499.19s.356-.063.499-.189c.347-.309 8.501-7.643 8.501-14.746 0-4.999-4.038-9.065-9-9.065zm0 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z"
-
+const pinIconFull: string = "M 12 0 C 7.038 0 3 4.066 3 9.065 C 3 16.168 11.154 23.502 11.501 23.81 C 11.644 23.937 11.822 24 12 24 C 12.178 24 12.356 23.937 12.499 23.811 C 12.846 23.502 21 16.168 21 9.065 C 21 4.066 16.962 0 12 0 Z"
 @Component({
   selector: 'app-data-viz3',
   templateUrl: './data-viz3.component.html',
@@ -19,6 +19,7 @@ export class DataViz3Component implements OnInit {
   
   private data: any;
   private pinTooltip: any
+  private rectTooltip: any
   public  graphTooltip: any;
   private container;
   private svg;
@@ -187,31 +188,36 @@ export class DataViz3Component implements OnInit {
         type: 'bull',
         tooltipText: "Premiers stades du bitcoin",
         start: new Date(2013, 11, 31),
-        end: new Date(2014, 5, 9)
+        end: new Date(2014, 5, 9),
+        description: "De sa creation en 2011, jusqu'à Juin 2014, le prix d'un bitcoin grimpe de 12000% à la hausse, passant de quelques dollars a 1100$",
       },
       {
         type: 'bear',
         tooltipText: "Le marché devient baissier avec un bitcoin ayant atteint les 1 150$",
         start: new Date(2014, 5, 10),
-        end: new Date(2016, 6, 8)
+        end: new Date(2016, 6, 8),
+        description: 'Lors de ces 759 jours, le bitcoin atteint une perte de valeur de -80% passant de 1100 a 200',
       },
       {
         type: 'bull',
         tooltipText: "Le marché est haussier et le mouvement est amplifié par le halving du bitcoin" ,
         start: new Date(2016, 6, 9),
-        end: new Date(2018, 0, 10)
+        end: new Date(2018, 0, 10),
+        description: "Lors de ces 550 jours, le bitcoin enregistre une hausse de 9000% passant d'environ 200$ a 18 000$",
       },
       {
         type: 'bear',
         tooltipText: "Le marché redevient baissier après avoir été en zone de surévaluation, avec un Bitcoin ayant atteint les 17 000$",
         start: new Date(2018, 0, 11),
-        end: new Date(2020, 4, 10)
+        end: new Date(2020, 4, 10),
+        description: "Lors de ces 851 jours, le bitcoin decend jusqu'a une perte de -73% de sa valeur, passant de plus de 18 000$ a un peu moins de 4000$",
       },
       {
         type: 'bull',
         tooltipText: "Un nouveau halving du bitcoin, indicateur d'un nouveau cycle haussier, propulse le marché à la hausse",
         start: new Date(2020, 4, 11),
-        end: new Date(2021, 3, 7)
+        end: new Date(2021, 3, 7),
+        description: "En 380 jours, le bitcoin a deja fait plus de x10 dans ce cylce (1000%), passant d'un plus bas a 4000$ a un plus haut de 65 000$",
       }
     ]
 
@@ -219,20 +225,40 @@ export class DataViz3Component implements OnInit {
       .attr('class', 'pinTooltip')
       .style('position', 'absolute')
       .style('display', 'none')
-      .text('tooltip text');
+      .text('tooltip text')
+      
+
+    this.rectTooltip = d3.select("#graph").append('div')
+    .attr('class', 'rectTooltip')
+    .style('position', 'absolute')
+    .style('display', 'none')
+    .style('height', '100px')
     
     const te = this.svg.selectAll('.cycle')
       .data(cycles)
       .enter().append('g')
       .attr('class', 'cycle')
       
-      te.append('rect')
+      const rect = te.append('rect')
       .attr('x', d => this.xScale(d.start))
       .attr('y', 0)
       .attr('width', d => this.xScale(d.end) - this.xScale(d.start))
       .attr('height', 18)
+      .style('cursor', 'pointer')
       .style('fill', d => {
         return d.type == 'bear' ? 'indianred' : 'mediumspringgreen'
+      })
+      .on('mouseenter', (event, d) => {
+        self.rectTooltip
+        .style('display', 'block')
+        .style('left', (event.path[0].getBoundingClientRect().x) + "px")
+        .style('top', Math.floor(event.pageY)-100 + "px")
+        .style('width', ((self.xScale(d.end) - self.xScale(d.start)) < 140 ? 140 : (self.xScale(d.end) - self.xScale(d.start)) + 'px'))
+        .html('<span>' + d.description + '</span>')
+      })
+      .on('mouseleave', () => {
+        self.rectTooltip
+        .style('display', 'none')
       })
       
       te.append('text')
@@ -241,24 +267,32 @@ export class DataViz3Component implements OnInit {
       .attr('text-anchor', 'middle')
       .text(d => d.type)
 
-      te.append('svg')
+      const pin = te.append('svg')
         .attr('x', d => this.xScale(d.start)- 10)
         .attr('y', '-25')
-        // .attr('pointer-events', 'visible')
-        .on('mouseenter', (event: MouseEvent, d) => {
+        .style('cursor', 'pointer')
+        pin.on('mouseenter', (event, d) => {
           // hover
-          console.log(event)
           self.pinTooltip
           .style('display', 'block')
-          .style('left', (event.pageX) + "px")
-          .style('top', (event.pageY) + "px")
+          .style('left', (event.path[0].getBoundingClientRect().x - 90) + "px")
+          .style('top', Math.floor(event.pageY)-100 + "px")
+          .html(`<span class="pinTooltipTextTitle">  ${d.start.getDate()}-${d.start.getMonth() + 1}-${d.start.getFullYear()} <br> </span>` + '<span class="pinTooltipText">' + d.tooltipText + '</span>')
+          .style('width', '200px')
+
           
         })
-        .on('mouseleave', () => {
+        pin.on('mouseleave', () => {
           self.pinTooltip.style('display', 'none')
         })
-      .append('path')
-      .attr('d', pinIcon )
+
+      pin.append('path')
+      .attr('d', pinIconFull )
+      pin.append('circle')
+      .attr('cx', '12')
+      .attr('cy', '9')
+      .attr('r', '4')
+      .attr('fill', 'white')
       
   }
 
@@ -285,10 +319,10 @@ export class DataViz3Component implements OnInit {
   public onToggle(obj: any, show: boolean){
     if (typeof obj == 'string' || obj instanceof String){
       d3.select(`#${obj}`)
-      .attr('stroke-dashoffset',(d,i,e) => {return show ? e.length : 0})
-      .attr("stroke-dasharray", (d,i,e) => {return show ? e.length : 0})
+      // .attr('stroke-dashoffset',(d,i,e) => {return show ? e.length : 0})
+      // .attr("stroke-dasharray", (d,i,e) => {return show ? e.length : 0})
 
-      // .style("stroke-dashoffset", show ? "visible" : "hidden")
+      .style("visibility", show ? "visible" : "hidden")
     } else
       obj.style("visibility", show ? "visible" : "hidden")
   }
