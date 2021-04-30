@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data-service.service';
+import * as d3Legend from '../../assets/d3-svg-legend'
 import * as d3 from 'd3';
 
 @Component({
@@ -13,6 +14,12 @@ export class DataViz2Component implements OnInit {
   showLog = true
 
   colors;
+  container;
+
+  margin = {top: 10, right: 30, bottom: 30, left: 60};
+  width = 1000 - this.margin.left - this.margin.right;
+  height = 600 - this.margin.top - this.margin.bottom;
+  containerWidth = 1200;
   
   btcPrices = [];
   sp500 = []
@@ -37,7 +44,9 @@ export class DataViz2Component implements OnInit {
       this.btcPrices = await this.dataService.getProcessedDataViz2();
       this.cherryPickDate(this.btcPrices, this.sp500)
       
+      this.setupBaseGraph();
       this.displayGraph();
+      this.drawLegend();
     });
   }
   
@@ -57,24 +66,31 @@ export class DataViz2Component implements OnInit {
       });
     });
   }
+  
+  private setupBaseGraph(): void {
+    this.container = d3.select('figure#graph2')
+    .append('svg')
+    .attr('class', 'container')
+    .attr('width', this.containerWidth)
+    .attr('height', this.height + 100)
+  }
 
   private displayGraph(): void {
     this.display(this)
   }
 
   private display(comp: DataViz2Component): void {
-    var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 1000 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
 
-    var svg = d3.select("#graph2")
+
+    var svg = this.container
       .append("svg")
         .attr("class", "unit")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", this.width + this.margin.left + this.margin.right + 100)
+        .attr("height", this.height + this.margin.top + this.margin.bottom + 50)
       .append("g")
-      .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
+      // .attr("transform",
+      //       "translate(" + this.margin.left + "," + this.margin.top + ")");
+      .attr('transform', `translate(${this.containerWidth/2 - this.width/2}, ${this.margin.left})`);
 
     // Add X axis --> it is a date format
     const date: Date[] = []
@@ -84,22 +100,30 @@ export class DataViz2Component implements OnInit {
     
     var xScale = d3.scaleTime()
       .domain(d3.extent(date))
-      .range([ 0, width ]);
+      .range([ 0, this.width ]);
     svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", "translate(0," + this.height + ")")
       .call(d3.axisBottom(xScale));
 
     // Add Y axis
     var y
     if (comp.showLog) {
       y = d3.scaleLog()
-        .domain([d3.min(comp.cherryPickDates, function(d) { return +d.btc_price; }), d3.max(comp.cherryPickDates, function(d) { return +d.btc_price; })])
-        .range([ height, 0 ]);
+        .domain(
+          [
+            d3.min(comp.cherryPickDates, function(d) { return +d.btc_price; }),
+            d3.max(comp.cherryPickDates, function(d) { return +d.btc_price; }) + 20000
+          ])
+        .range([ this.height, 0 ]);
     }
     else {
       y = d3.scaleLinear()
-      .domain([d3.min(comp.cherryPickDates, function(d) { return +d.btc_price; }), d3.max(comp.cherryPickDates, function(d) { return +d.btc_price; })])
-      .range([ height, 0 ]);
+      .domain(
+        [
+          d3.min(comp.cherryPickDates, function(d) { return +d.btc_price; }),
+          d3.max(comp.cherryPickDates, function(d) { return +d.btc_price; }) + 4000
+        ])
+      .range([ this.height, 0 ]);
     }
 
     svg.append("g")
@@ -108,12 +132,11 @@ export class DataViz2Component implements OnInit {
           return `${comp.nFormatter(y, 0)}`
         }))
       
-      console.log(comp.cherryPickDates)
     // Add the line
 
     comp.colors = d3.scaleOrdinal()
       .domain(this.data.map(d => d.type))
-      .range(['#4862B4', '#A6D3A6'])
+      .range(['#4862B4', '#ff5050'])
 
     var line = d3.line()
       .x(d => xScale(d[0]))
@@ -130,7 +153,7 @@ export class DataViz2Component implements OnInit {
       .attr('id', d => d.type)
       .attr('d', d => line(d.values))
       .style('stroke', d => comp.colors(d.type))
-      .style('stroke-weight', 1.5)
+      .style('stroke-width', 3)
       .style('fill', 'none')
 
     
@@ -143,16 +166,14 @@ export class DataViz2Component implements OnInit {
        .style("stroke-width", 2)
        .style("opacity", "0");
   
-     var lines = document.getElementsByClassName('line') as any;
-
      var mousePerLine = mouseGroup.selectAll('.mouse-per-line2')
        .data(this.data)
        .enter()
        .append("g")
-       .attr("class", "mouse-per-line2");
+       .attr("class", function(d) { return `mouse-per-line2-${d.type}`});
 
     mousePerLine.append("circle")
-      .attr("r", 5)
+      .attr("r", 7)
       .style("stroke", function(d) {
         return comp.colors(d.type);
       })
@@ -161,35 +182,43 @@ export class DataViz2Component implements OnInit {
       .style("opacity", "0");
 
     mousePerLine.append("text")
-      .attr("transform", "translate(10,3)")
-      .text("TEST")
+      .attr("transform", "translate(-50,-20)")
+      .style("font-weight", "bold")
+      .text("")
 
     mouseGroup.append('svg:rect')
-      .attr('width', width) 
-      .attr('height', height)
+      .attr('width', this.width) 
+      .attr('height', this.height)
       .attr('fill', 'none')
       .attr('pointer-events', 'all')
       .on('mouseout', function () { // on mouse out hide line, circles and text
-         d3.select(".mouse-line2")
-           .style("opacity", "0");
-         d3.selectAll(".mouse-per-line2 circle")
+        d3.select(".mouse-line2")
           .style("opacity", "0");
-        d3.selectAll(".mouse-per-line2 text")
+        d3.selectAll(".mouse-per-line2-btc circle")
           .style("opacity", "0");
-
+        d3.selectAll(".mouse-per-line2-sp circle")
+          .style("opacity", "0");
+        d3.selectAll(".mouse-per-line2-btc text")
+          .style("opacity", "0");
+        d3.selectAll(".mouse-per-line2-sp text")
+          .style("opacity", "0");
       })
       .on('mouseover', function () { // on mouse in show line, circles and text
         d3.select(".mouse-line2")
           .style("opacity", "1");
-        d3.selectAll(".mouse-per-line2 circle")
+        d3.selectAll(".mouse-per-line2-btc circle")
           .style("opacity", "1");
-        d3.selectAll(".mouse-per-line2 text")
+        d3.selectAll(".mouse-per-line2-sp circle")
+          .style("opacity", "1");
+        d3.selectAll(".mouse-per-line2-btc text")
+          .style("opacity", "1");
+        d3.selectAll(".mouse-per-line2-sp text")
           .style("opacity", "1");
       })
       .on('mousemove', function (event: MouseEvent) { // update tooltip content, line, circles and text when mouse moves
         var mouse = d3.pointer(event)
 
-         d3.selectAll(".mouse-per-line2")
+         d3.selectAll(".mouse-per-line2-btc")
            .attr("transform", (d, i) => {
              
              var xDate = xScale.invert(mouse[0])             
@@ -198,35 +227,80 @@ export class DataViz2Component implements OnInit {
 
              d3.select(".mouse-line2")
               .attr("d", function () {
-                var data = "M" + xScale(d['values'][idx][0]) + "," + height;
+                var data = "M" + xScale(d['values'][idx][0]) + "," + comp.height;
                 data += " " + xScale(d['values'][idx][0]) + "," + 0;
                 return data;
               });
-            console.log(d);
+  
 
-            // var beginning = 0,
-            //     end = lines[i].getTotalLength(),
-            //     target = null;
-            
-            //     let pos
-            // while (true){
-            //   target = Math.floor((beginning + end) / 2);
-            //   pos = lines[i].getPointAtLength(target);
-            //   if ((target === end || target === beginning) && pos.x !== mouse[0]) {
-            //       break;
-            //   }
-            //   if (pos.x > mouse[0])      end = target;
-            //   else if (pos.x < mouse[0]) beginning = target;
-            //   else break; //position found
-            // }
-            
-            // d3.select(this).select('text')
-            //   .text(y.invert(pos.y).toFixed(2));
+            comp.displayTextMofo(mouse, comp, event, xScale, true);
 
             return "translate(" + xScale(d['values'][idx][0]) + "," + y(d['values'][idx][1]) + ")"
           });
+          
+          d3.selectAll(".mouse-per-line2-sp")
+          .attr("transform", (d, i) => {
+            
+            const xDate = xScale.invert(mouse[0])             
+            const bisect = d3.bisector(d => d[0]).left 
+            const idx = bisect(d["values"], xDate);
+
+            d3.select(".mouse-line2")
+             .attr("d", function () {
+               let data = "M" + xScale(d['values'][idx][0]) + "," + comp.height;
+               data += " " + xScale(d['values'][idx][0]) + "," + 0;
+               return data;
+             });
+ 
+
+           comp.displayTextMofo(mouse, comp, event, xScale, false);
+
+           return "translate(" + xScale(d['values'][idx][0]) + "," + y(d['values'][idx][1]) + ")"
+         });
       })
       
+  }
+
+  private displayTextMofo(mouse, comp: DataViz2Component, mouseEvent: MouseEvent, xScale, isBtc: boolean): void {
+    const mouseValues = []
+    comp.data.map(d => {
+      const xDate = xScale.invert(mouse[0])             
+      const bisect = d3.bisector(d => d[0]).left 
+      const idx = bisect(d["values"], xDate);
+      
+      mouseValues.push({key: d.type, date: d.values[idx][0], price: d.values[idx][1]})
+    })
+
+    const positiveValue: string = String(true) as string;
+    const negativeValue: string = String(false) as string;
+    
+    if (String(isBtc).toLowerCase().trim().valueOf() === String(positiveValue)) {
+      d3.selectAll(".mouse-per-line2-btc text")
+        .text(Math.ceil(mouseValues[0].price) + "$")
+    }
+    else if (String(isBtc).toLowerCase().trim().valueOf() === String(negativeValue)) {
+      d3.selectAll(".mouse-per-line2-sp text")
+      .text(Math.ceil(mouseValues[1].price) + "$")
+    }
+  }
+
+  private drawLegend(): void {
+    const scaleLeft = d3.scaleOrdinal()
+    .domain(['Valeur du Bitcoin', 'Valeur du S&P500'])
+    .range(['#4862B4', '#ff5050'])
+
+    const legend = d3Legend.legendColor()
+                           .title('Légende')
+                           .shapeHeight(5)
+                           .shapeWidth(20)
+                           .shapePadding(5)
+                           .labelWrap(150)
+                           .scale(scaleLeft)
+    this.container
+      .append('g')
+      .attr('class', 'legend')
+      .attr('transform',  `translate(200, 100)`)
+      .call(legend)
   }
 
   async getFolder(): Promise<string> {
