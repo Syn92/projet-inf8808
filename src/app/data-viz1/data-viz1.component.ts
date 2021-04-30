@@ -364,7 +364,7 @@ export class DataViz1Component implements OnInit {
     for (const key in this.coinLists) {
       this.coinLists[key].coins.forEach(e => {
         if (e.coin === 'others')
-          e.coin = 'Autres cryptomonnaies'
+          e.coin = 'Autres_cryptomonnaies'
       });
     }
   }
