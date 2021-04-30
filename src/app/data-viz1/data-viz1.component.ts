@@ -65,7 +65,8 @@ export class DataViz1Component implements OnInit {
       this.displaySpinner = false;
       this.sortMofo()
       this.findSymbol();
-      this.findGrowth()
+      this.findGrowth();
+      this.changeName();
       console.log(this.coinLists);
       this.displayGraph();
 
@@ -301,7 +302,7 @@ export class DataViz1Component implements OnInit {
     currentToolTip.html
         (`<span id="title">
           <p>Nom: ${data.coin}</p> 
-          <p style="color:${data.growth >= 0 ? "green":"red"}">Croissance: ${data.growth}%</p>
+          <p style="color:${data.growth >= 0 ? "green":"red"}">Croissance du ratio: ${data.growth}%</p>
           <p>Rang: ${data.rank}</p> 
           <p>Capitalisation: ${(data.market_cap/1000000000).toFixed(2)}$ Milliards</p> 
         </span>`)
@@ -355,6 +356,15 @@ export class DataViz1Component implements OnInit {
         const coinSymbol = symbols[c.coin] 
         c['symbol'] = coinSymbol
         c['growth'] = 0
+      });
+    }
+  }
+
+  private changeName(): void {
+    for (const key in this.coinLists) {
+      this.coinLists[key].coins.forEach(e => {
+        if (e.coin === 'others')
+          e.coin = 'Autres cryptomonnaies'
       });
     }
   }
