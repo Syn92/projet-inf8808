@@ -4,6 +4,8 @@ import { DataService } from '../data-service.service';
 import * as d3Legend from '../../assets/d3-svg-legend'
 import * as d3 from 'd3';
 
+const pinIconFull: string = "M 12 0 C 7.038 0 3 4.066 3 9.065 C 3 16.168 11.154 23.502 11.501 23.81 C 11.644 23.937 11.822 24 12 24 C 12.178 24 12.356 23.937 12.499 23.811 C 12.846 23.502 21 16.168 21 9.065 C 21 4.066 16.962 0 12 0 Z"
+
 @Component({
   selector: 'app-data-viz2',
   templateUrl: './data-viz2.component.html',
@@ -88,11 +90,8 @@ export class DataViz2Component implements OnInit {
         .attr("width", this.width + this.margin.left + this.margin.right + 100)
         .attr("height", this.height + this.margin.top + this.margin.bottom + 50)
       .append("g")
-      // .attr("transform",
-      //       "translate(" + this.margin.left + "," + this.margin.top + ")");
       .attr('transform', `translate(${this.containerWidth/2 - this.width/2}, ${this.margin.left})`);
 
-    // Add X axis --> it is a date format
     const date: Date[] = []
     this.data[0].values.forEach(e => {
       date.push(e[0])
@@ -105,7 +104,6 @@ export class DataViz2Component implements OnInit {
       .attr("transform", "translate(0," + this.height + ")")
       .call(d3.axisBottom(xScale));
 
-    // Add Y axis
     var y
     if (comp.showLog) {
       y = d3.scaleLog()
@@ -131,9 +129,7 @@ export class DataViz2Component implements OnInit {
         .tickFormat(y => {
           return `${comp.nFormatter(y, 0)}`
         }))
-      
-    // Add the line
-
+        
     comp.colors = d3.scaleOrdinal()
       .domain(this.data.map(d => d.type))
       .range(['#4862B4', '#ff5050'])
@@ -156,6 +152,46 @@ export class DataViz2Component implements OnInit {
       .style('stroke-width', 3)
       .style('fill', 'none')
 
+    const pin = lineGroup.append('svg')
+      .attr('x', xScale(new Date(2018, 11, 9)) - 10)
+      .attr('y', '-25')
+      .attr('width', 1000)
+      .attr('height', 1000)
+    pin.append('text')
+      .text("Trade war")
+      .attr('x', '25')
+      .attr('y', '12')
+      .attr('color', 'black')
+    pin.append('text')
+      .text("with China")
+      .attr('x', '25')
+      .attr('y', '32')
+      .attr('color', 'black')
+    pin.append('path')
+      .attr('d', pinIconFull )
+    pin.append('circle')
+      .attr('cx', '12')
+      .attr('cy', '9')
+      .attr('r', '4')
+      .attr('fill', 'white')
+
+    const pin2 = lineGroup.append('svg')
+      .attr('x', xScale(new Date(2020,2,8)) - 10)
+      .attr('y', '-25')
+      .attr('width', 1000)
+      .attr('height', 1000)
+    pin2.append('text')
+      .text("Covid 19")
+      .attr('x', '25')
+      .attr('y', '17')
+      .attr('color', 'black')
+    pin2.append('path')
+      .attr('d', pinIconFull )
+    pin2.append('circle')
+      .attr('cx', '12')
+      .attr('cy', '9')
+      .attr('r', '4')
+      .attr('fill', 'white')
     
      var mouseGroup = svg.append('g')
        .attr('class', 'mouse-over-effects2')
@@ -191,7 +227,7 @@ export class DataViz2Component implements OnInit {
       .attr('height', this.height)
       .attr('fill', 'none')
       .attr('pointer-events', 'all')
-      .on('mouseout', function () { // on mouse out hide line, circles and text
+      .on('mouseout', function () {
         d3.select(".mouse-line2")
           .style("opacity", "0");
         d3.selectAll(".mouse-per-line2-btc circle")
@@ -203,7 +239,7 @@ export class DataViz2Component implements OnInit {
         d3.selectAll(".mouse-per-line2-sp text")
           .style("opacity", "0");
       })
-      .on('mouseover', function () { // on mouse in show line, circles and text
+      .on('mouseover', function () {
         d3.select(".mouse-line2")
           .style("opacity", "1");
         d3.selectAll(".mouse-per-line2-btc circle")
@@ -215,7 +251,7 @@ export class DataViz2Component implements OnInit {
         d3.selectAll(".mouse-per-line2-sp text")
           .style("opacity", "1");
       })
-      .on('mousemove', function (event: MouseEvent) { // update tooltip content, line, circles and text when mouse moves
+      .on('mousemove', function (event: MouseEvent) {
         var mouse = d3.pointer(event)
 
          d3.selectAll(".mouse-per-line2-btc")
