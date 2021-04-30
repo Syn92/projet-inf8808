@@ -57,3 +57,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
         font-weight: 500;
     }   
 }
+
+.pinTooltip {
+    background-color: black;
+}
+
+.pinTooltip .pinTooltipText {
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 2px;
+    z-index: 1;
+}
+
+.pinTooltipTextTitle {
+    color: white;
+    padding: 0;
+    margin: 0;
+}
