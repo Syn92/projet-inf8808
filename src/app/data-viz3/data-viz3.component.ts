@@ -210,14 +210,14 @@ export class DataViz3Component implements OnInit {
         tooltipText: "Le marché redevient baissier après avoir été en zone de surévaluation, avec un Bitcoin ayant atteint les 17 000$",
         start: new Date(2018, 0, 11),
         end: new Date(2020, 4, 10),
-        description: "Lors de ces 851 jours, le bitcoin decend jusqu'a une perte de -73% de sa valeur, passant de plus de 18 000$ a un peu moins de 4000$",
+        description: "Lors de ces 851 jours, le prix du bitcoin decend jusqu'a une perte de -73% de sa valeur, passant de plus de 18 000$ à un peu moins de 4000$",
       },
       {
         type: 'bull',
         tooltipText: "Un nouveau halving du bitcoin, indicateur d'un nouveau cycle haussier, propulse le marché à la hausse",
         start: new Date(2020, 4, 11),
         end: new Date(2021, 3, 7),
-        description: "En 380 jours, le bitcoin a deja fait plus de x10 dans ce cylce (1000%), passant d'un plus bas a 4000$ a un plus haut de 65 000$",
+        description: "En 380 jours, le bitcoin a deja fait plus de x10 dans ce cylce (1000%), passant d'un plus bas à 4000$ à un plus haut de 65 000$",
       }
     ]
 
@@ -244,6 +244,7 @@ export class DataViz3Component implements OnInit {
       .attr('y', 0)
       .attr('width', d => this.xScale(d.end) - this.xScale(d.start))
       .attr('height', 18)
+      .attr('class', 'rect')
       .style('cursor', 'pointer')
       .style('fill', d => {
         return d.type == 'bear' ? 'indianred' : 'mediumspringgreen'
@@ -251,8 +252,8 @@ export class DataViz3Component implements OnInit {
       .on('mouseenter', (event, d) => {
         self.rectTooltip
         .style('display', 'block')
-        .style('left', (event.path[0].getBoundingClientRect().x) + "px")
-        .style('top', Math.floor(event.pageY)-100 + "px")
+        .style('left', (event.path[0].getBoundingClientRect().x) - ((self.xScale(d.end) - self.xScale(d.start)) < 140 ? 100 : 0) + "px")
+        .style('top', Math.floor(event.pageY)-120 + "px")
         .style('width', ((self.xScale(d.end) - self.xScale(d.start)) < 140 ? 140 : (self.xScale(d.end) - self.xScale(d.start)) + 'px'))
         .html('<span>' + d.description + '</span>')
       })
@@ -265,6 +266,7 @@ export class DataViz3Component implements OnInit {
       .attr('x', d => this.xScale(d.start) + ((this.xScale(d.end)- this.xScale(d.start))/2))
       .attr('y', 14)
       .attr('text-anchor', 'middle')
+      .style('pointer-events', 'none')
       .text(d => d.type)
 
       const pin = te.append('svg')
@@ -367,7 +369,7 @@ export class DataViz3Component implements OnInit {
     comp.graphTooltip = d3.select("#graph").append('div')
       .attr('id', 'tooltip')
       .style('position', 'absolute')
-      .style('background-color', 'rgba(122, 122, 122)')
+      .style('background-color', 'rgb(230, 230, 230)')
       .style('padding', 6)
       .style('display', 'none')
 
@@ -461,7 +463,7 @@ export class DataViz3Component implements OnInit {
       })
       .style('font-size', 10)
       .html(d => {
-        return `${d.key}: ${Math.floor(d.price)}`
+        return `${d.key}: ${Math.floor(d.price).toLocaleString()} ${d.key == 'trend' ? '' : (d.key == 'btcDom' ? '%' : '$')}`
       })
 
     comp.graphTooltip

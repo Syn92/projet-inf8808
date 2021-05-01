@@ -75,3 +75,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
     padding: 0;
     margin: 0;
 }
+
+.rect:hover {
+    opacity: 0.5;
+}
+
+.rectTooltip {
+    padding-top: 20px;
+    background-color: rgba(230, 230, 230, 0.8);
+    border-radius: 7px;
+}

@@ -125,9 +125,9 @@ export class DataViz1Component implements OnInit {
     .style("fill", "url(#linear-gradient)");  
 
     svg.append('text')
-    .attr('x', 630)
+    .attr('x', 500)
     .attr('y', 25)
-    .text(d => "Changement de la valeur selon la dernière année évaluée")
+    .text(d => "Variation de la surface qu'occupe une cryptomonnaie par rapport à l'année clé précédente évaluée")
     .attr("font-size", 18)
 
     svg.append('text')
