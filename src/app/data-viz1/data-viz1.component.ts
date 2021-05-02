@@ -26,7 +26,7 @@ const symbols = {
   polkadot: 'DOT',
   uniswap: 'UNI',
   dogecoin: 'DOGE',
-  others: 'OTH'
+  others: 'Oth.'
 }
 
 @Component({

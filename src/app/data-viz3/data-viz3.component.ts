@@ -36,7 +36,7 @@ export class DataViz3Component implements OnInit {
   public showBtc: boolean = true;
   public showBtcDom: boolean = true;
   public showTrend: boolean = true;
-  public showVol: boolean = true;
+  public showVol: boolean = false;
   public showTotal: boolean = true;
 
   public btc: any;
@@ -51,6 +51,7 @@ export class DataViz3Component implements OnInit {
     this.dataService.getProcessedData().then((res: IData) => {
       this.data = res
       this.displayGraph()
+      this.onToggle(this.vol,this.showVol)
     });
   }
 
@@ -148,7 +149,7 @@ export class DataViz3Component implements OnInit {
   private drawLegend() {
     const scaleLeft = d3.scaleOrdinal()
                     .domain(['Capitalisation totale des cryptomonnaies','Valeur du Bitcoin', `Volume d'échange (incrémenté)`, `Volume d'échange (décrémenté)`])
-                    .range(['rgb(70, 130, 180)','#4B0082', 'rgb(166, 211, 166)', 'rgb(255, 166, 166)'])
+                    .range(['rgb(70, 130, 180)','#8935b0', 'rgb(166, 211, 166)', 'rgb(255, 166, 166)'])
     
     const scaleRight  = d3.scaleOrdinal()
                     .domain(['Dominance du bitcoin', `'Bitcoin' sur google trend US`])
@@ -332,7 +333,7 @@ export class DataViz3Component implements OnInit {
   private displayLines(comp: DataViz3Component) {
     comp.colors = d3.scaleOrdinal()
       .domain(this.LEFT_AXIS.concat(this.RIGHT_AXIS))
-      .range(['#4682B4', '#A6D3A6', '#4B0082', '#FFA500', '#FF1493'])
+      .range(['#4682B4', '#A6D3A6', '#8935b0', '#FFA500', '#FF1493'])
 
     var lineLeft = d3.line()
       .x(d => this.xScale(d[0]))

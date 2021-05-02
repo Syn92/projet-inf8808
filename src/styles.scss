@@ -1,7 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%;}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
+html, body { 
+    height: 100%; 
+//     background: rgb(34,57,126);
+// background: linear-gradient(to right, rgba(34,57,126,1) 0%, rgba(43,96,180,1) 100%); 
+
+// background: linear-gradient(to right, rgba(0,1,51,1) 0%, rgba(13,45,129,1) 100%);
+}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
 .legend {
     .legendTitle {
@@ -10,11 +16,27 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
     }
 }
 
+.dark-mode {
+    background:rgb(34, 37, 49);
+    color: white;
+    text { color: white; fill: white;}
+    #tooltip, #tooltip1a, #tooltip1b, #tooltip1c, .rectTooltip {
+        color: black;
+    }
+    .spacer {
+        border-bottom: 1px solid white;
+    }
+}
+
+.spacer {
+    width: 50%;
+    margin: 0 auto 20px auto;
+    border-bottom: 1px solid black;
+}
+
 #tooltip {
-    // border: 1px solid rgb(97, 97, 97);
     text-align: left;
     border-radius: 3px;
-    // box-shadow: 0px 5px 8px 1px #828282;
     padding: 10px;
     #title {
         font-size: larger;
@@ -23,10 +45,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
 }
 
 #tooltip1a {
-    // border: 1px solid rgb(97, 97, 97);
     text-align: left;
     border-radius: 3px;
-    // box-shadow: 0px 5px 8px 1px #828282;
     padding: 10px;
     #title {
         font-size: larger;
@@ -35,10 +55,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
 }
 
 #tooltip1b {
-    // border: 1px solid rgb(97, 97, 97);
     text-align: left;
     border-radius: 3px;
-    // box-shadow: 0px 5px 8px 1px #828282;
     padding: 10px;
     #title {
         font-size: larger;
@@ -47,10 +65,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
 }
 
 #tooltip1c {
-    // border: 1px solid rgb(97, 97, 97);
     text-align: left;
     border-radius: 3px;
-    // box-shadow: 0px 5px 8px 1px #828282;
     padding: 10px;
     #title {
         font-size: larger;
@@ -82,6 +98,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif }
 
 .rectTooltip {
     padding-top: 20px;
-    background-color: rgba(230, 230, 230, 0.8);
+    background-color: rgb(230, 230, 230);
     border-radius: 7px;
 }
