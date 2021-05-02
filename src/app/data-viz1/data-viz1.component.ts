@@ -98,7 +98,7 @@ export class DataViz1Component implements OnInit {
   private createLegend(): void {
     const svg = d3.select('#legend1')
       .append("svg")
-      .attr("width", '100%')
+      .attr("width", '2000px')
       .attr("height", '80px')
     const defs = svg.append("defs")
     const gradient = defs.append('linearGradient')

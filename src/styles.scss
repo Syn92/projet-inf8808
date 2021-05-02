@@ -16,6 +16,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
     }
 }
 
+.mat-toolbar.mat-primary {
+    background-color: inherit;
+    color: gray;
+}
+
 .dark-mode {
     background:rgb(34, 37, 49);
     color: white;
@@ -28,6 +33,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
     }
     .cycle {
         fill: lightcoral;
+    }
+    .mat-toolbar {
+        color: white;
     }
 }
 
