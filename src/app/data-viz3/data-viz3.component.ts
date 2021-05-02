@@ -320,12 +320,28 @@ export class DataViz3Component implements OnInit {
   }
 
   public onToggle(obj: any, show: boolean){
-    if (typeof obj == 'string' || obj instanceof String){
-      d3.select(`#${obj}`)
-      // .attr('stroke-dashoffset',(d,i,e) => {return show ? e.length : 0})
-      // .attr("stroke-dasharray", (d,i,e) => {return show ? e.length : 0})
+    var lineLeft = d3.line()
+    .x(d => this.xScale(d[0]))
+    .y(d => this.yScale1(d[1]))
 
-      .style("visibility", show ? "visible" : "hidden")
+  var lineRight = d3.line()
+    .x(d => this.xScale(d[0]))
+    .y(d => this.yScale2(d[1]))
+
+    if (typeof obj == 'string' || obj instanceof String){
+      if(show){
+        d3.select(`#${obj}`).attr('d', (d) =>{return (this.LEFT_AXIS.includes(d.type) ? lineLeft(d.values) : lineRight(d.values))})
+        .attr("stroke-dashoffset", (d, i, e) => e[i].getTotalLength())
+        .attr("stroke-dasharray", (d, i, e) => e[i].getTotalLength())
+        .transition(d3
+          .transition()
+          .ease(d3.easeSin)
+          .duration(2000))
+        .attr("stroke-dashoffset", 0);
+
+      }else{
+        d3.select(`#${obj}`).attr('d',d3.line(0))
+      }
     } else
       obj.style("visibility", show ? "visible" : "hidden")
   }
