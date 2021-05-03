@@ -330,9 +330,9 @@ export class DataViz3Component implements OnInit {
 
     if (typeof obj == 'string' || obj instanceof String){
       if(show){
-        d3.select(`#${obj}`).attr('d', (d) =>{return (this.LEFT_AXIS.includes(d.type) ? lineLeft(d.values) : lineRight(d.values))})
-        .attr("stroke-dashoffset", (d, i, e) => e[i].getTotalLength())
-        .attr("stroke-dasharray", (d, i, e) => e[i].getTotalLength())
+        d3.select(`#${obj}`).attr('d', (d: any) =>{return (this.LEFT_AXIS.includes(d.type) ? lineLeft(d.values) : lineRight(d.values))})
+        .attr("stroke-dashoffset", (d, i, e: any) => e[i].getTotalLength())
+        .attr("stroke-dasharray", (d, i, e: any) => e[i].getTotalLength())
         .transition(d3
           .transition()
           .ease(d3.easeSin)

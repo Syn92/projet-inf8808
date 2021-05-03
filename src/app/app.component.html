@@ -2,48 +2,50 @@
     <span style="flex-grow: 1">Projet Crypto</span>
     <mat-slide-toggle [checked]="true" (change)="toggle()">Mode sombre</mat-slide-toggle>
 </mat-toolbar>
-<div class="main-container" style="padding-bottom: 100px">
-    <h1>Visualisation 1 - Dominance du Bitcoin vs les autres cryptommonaies</h1>
-    <h3>Comparaison des 3 différents sommets de valorisation qu'ont connus les cryptomonnaies, et comment est réparti le capital entre elles.</h3>
-    <div class="spacer"></div>
-    <app-data-viz1></app-data-viz1>
-    <p class='description'>L’objectif de cette visualisation est de montrer la place que prend le Bitcoin par 
-        rapport aux autres cryptomonnaies du marché. C'est ce qu'on appelle la dominance du Bitcoin. Chaque carré représente donc une crypto monnaie, 
-        et son aire est proportionnelle à sa capitalisation par rapport à la capitalisation totale du marché. 
-        Ainsi, si la capitalisation du bitcoin représente 1,1 bilion USD et que la capitalisation totale 
-        est de 1,8T USD, le bitcoin occupera 60% de l’espace. Avec les 3 treemaps côte-à-côté, chacune représentant un moment de croissance très prononcé pour le marché,
-        on peut comparer les différents niveaux atteints et les particularités d’un cycle à l’autre, 
-        comme les nouveaux altcoins qui s'immiscent dans le marché. Le ratio de croissance de chaque cryptomonnaie est 
-        déterminé selon l'espace qu'il prend dans le marché par rapport à l'espace qu'il prenait précédemment.</p>
-</div>
-<div class="main-container">
-    <h1>Visualisation 2 - S&P500 vs Bitcoin</h1>
-    <h3>Comparaison entre la valeur monétaire du Bitcoin et celle du S&P500 pour les mêmes dates.</h3>
-    <div class="spacer"></div>
-    <app-data-viz2></app-data-viz2>
-    <p class='description'>
-        Cette visualisation compare la valeur d'un Bitcoin (en bleu) à celle de l'indice S&P500 (en rouge). L'objectif est de pouvoir observer les différences entre le marché traditionnel et le marché des cryptomonnaies. 
-        Ainsi, on peut voir que les 2 marchés connaissent une 
-        croissance importante et qu'ils n'ont fait que pratiquement augmenter lors de ces 6 dernières années. Bien qu'ils soient tous 2 à leur point le plus haut jamais atteint, les 2 marchés ont subi les mêmes crashs de fin 2018, 
-        lié à la guerre du commerce avec la Chine et de mars 2020, lié au Covid-19. <br> Il est important de noter que bien que les données semblent montrer que le bitcoin ait dépassé le S&P500, ce n'est pas le cas.
-         En effet, l'indice du S&P500, en plus d'être un indice, représente les 500 plus grandes compagnies cotées en bourse, soit une capitalisation de plus de 33 billions (10<sup>12</sup>) de dollars contre la capitalisation du bitcoin valorisé à 1 billion de dollars.
- </p>
-</div>
-<div class="main-container">
-    <h1>Visualisation 3 - Les cycles du marché des cryptommonaies</h1>
-    <h3>Analyse des cycles du marché et du bitcoin à l'aide d'indicateur comme la BTC dominance et Google Trends </h3>
-    <div class="spacer"></div>
-    <app-data-viz3></app-data-viz3>
-    <p class='description'>Cette visualisation permet une vue d'ensemble sur les mouvements du marché des cryptomonnaies, et plus particulièrement des
-        cycles qu'il traverse. À l'aide de données comme celle de Google Trends, on peut observer que c'est un marché très dirigé par le bitcoin et que l'intérêt que les investisseurs lui portent se reflète sur l'ensemble du marché.
-        Cette tendance de Google reflète la proportion de recherches portant sur le mot clef "bitcoin" dans le monde entier et sur la période donnée, par rapport à la région où le taux d'utilisation de ce mot clé est le plus élevé (valeur de 100). 
-        Ainsi, une valeur de 50 signifie que le mot clé a été utilisé moitié moins souvent dans le monde, et une valeur de 0 signifie que les données pour ce mot clé sont insuffisantes. <br> <br>
-        La dominance du Bitcoin est le ratio de la capitalisation du Bitcoin sur la capitalisation totale. Ce ratio permet de voir la place qu'occupe le bitcoin dans le marché des cryptomonnaies. C'est une métrique très intéressante, 
-        car elle permet de mieux comprendre les flux monétaires du marché.
-        Ainsi, une dominance du Bitcoin qui diminue et un prix du Bitcoin qui augmente indiquent un marché effervescent et un intérêt croissant pour les altcoins, comme en Q1 2017 ou l'ethereum avait presque dépassé la capitalisation du bitcoin. Une dominance du BTC qui augmente en même temps que le prix correspond souvent à une 
+
+    <div class="main-container" style="padding-bottom: 100px">
+        <h1>Visualisation 1 - Dominance du Bitcoin vs les autres cryptommonaies</h1>
+        <h3>Comparaison des 3 différents sommets de valorisation qu'ont connus les cryptomonnaies, et comment est réparti le capital entre elles.</h3>
+        <div class="spacer"></div>
+        <app-data-viz1></app-data-viz1>
+        <p class='description'>L’objectif de cette visualisation est de montrer la place que prend le Bitcoin par 
+            rapport aux autres cryptomonnaies du marché. C'est ce qu'on appelle la dominance du Bitcoin. Chaque carré représente donc une crypto monnaie, 
+            et son aire est proportionnelle à sa capitalisation par rapport à la capitalisation totale du marché. 
+            Ainsi, si la capitalisation du bitcoin représente 1,1 bilion USD et que la capitalisation totale 
+            est de 1,8T USD, le bitcoin occupera 60% de l’espace. Avec les 3 treemaps côte-à-côté, chacune représentant un moment de croissance très prononcé pour le marché,
+            on peut comparer les différents niveaux atteints et les particularités d’un cycle à l’autre, 
+            comme les nouveaux altcoins qui s'immiscent dans le marché. Le ratio de croissance de chaque cryptomonnaie est 
+            déterminé selon l'espace qu'il prend dans le marché par rapport à l'espace qu'il prenait précédemment.</p>
+        </div>
+        <div class="main-container">
+            <h1>Visualisation 2 - S&P500 vs Bitcoin</h1>
+            <h3>Comparaison entre la valeur monétaire du Bitcoin et celle du S&P500 pour les mêmes dates.</h3>
+            <div class="spacer"></div>
+            <app-data-viz2></app-data-viz2>
+            <p class='description'>
+                Cette visualisation compare la valeur d'un <strong> Bitcoin </strong> (en bleu) à celle de l'indice <strong> S&P500 </strong> (en rouge). L'objectif est de pouvoir observer les différences entre le marché traditionnel et le marché des cryptomonnaies. 
+                Ainsi, on peut voir que les 2 marchés connaissent une 
+                croissance importante et qu'ils n'ont fait que pratiquement augmenter lors de ces 6 dernières années. Bien qu'ils soient tous 2 à leur point le plus haut jamais atteint, les 2 marchés ont subi les mêmes crashs de fin 2018, 
+                lié à la guerre du commerce avec la Chine et de mars 2020, lié au Covid-19. <br> <br> Il est important de noter que bien que les données semblent montrer que le bitcoin ait dépassé le S&P500, ce n'est pas le cas.
+                En effet, l'indice du S&P500, en plus d'être un indice, représente les 500 plus grandes compagnies cotées en bourse, soit une capitalisation de plus de <strong> 33 billions </strong> (10<sup>12</sup>) de dollars contre la capitalisation du bitcoin valorisé à <strong> 1 billion </strong> de dollars.
+            </p>
+        </div>
+
+        <div class="main-container">
+            <h1>Visualisation 3 - Les cycles du marché des cryptommonaies</h1>
+            <h3>Analyse des cycles du marché et du bitcoin à l'aide d'indicateur comme la BTC dominance et Google Trends </h3>
+            <div class="spacer"></div>
+            <app-data-viz3></app-data-viz3>
+            <p class='description'>Cette visualisation permet une vue d'ensemble sur les mouvements du marché des cryptomonnaies, et plus particulièrement des
+                cycles qu'il traverse. À l'aide de données comme celle de Google Trends, on peut observer que c'est un marché très dirigé par le bitcoin et que l'intérêt que les investisseurs lui portent se reflète sur l'ensemble du marché.
+                Cette tendance de Google reflète la proportion de recherches portant sur le mot clef "bitcoin" aux États-Unis et sur la période donnée, par rapport à la région où le taux d'utilisation de ce mot clé est le plus élevé (valeur de 100). 
+                Ainsi, une valeur de 50 signifie que le mot clé a été utilisé moitié moins souvent aux États-Unis, et une valeur de 0 signifie que les données pour ce mot clé sont insuffisantes. <br> <br>
+                La dominance du Bitcoin est le ratio de la capitalisation du Bitcoin sur la capitalisation totale. Ce ratio permet de voir la place qu'occupe le bitcoin dans le marché des cryptomonnaies. C'est une métrique très intéressante, 
+                car elle permet de mieux comprendre les flux monétaires du marché.
+                Ainsi, une dominance du Bitcoin qui diminue et un prix du Bitcoin qui augmente indiquent un marché effervescent et un intérêt croissant pour les altcoins, comme en Q1 2017 ou l'ethereum avait presque dépassé la capitalisation du bitcoin. Une dominance du BTC qui augmente en même temps que le prix correspond souvent à une 
         amplification du mouvement haussier pour la valorisation du bitcoin, comme on peut le voir Q2 2017 et Q4 2020. Finalement, la dominance et le prix du bitcoin qui diminue, accompagné d'une capitalisation totale à la hausse,
-         indiquent qu'une partie de la capitalisation du bitcoin ainsi que la nouvelle liquidité introduite dans le marché se dirigent vers les altcoins comme on a pu le voir en janvier 2018, et c'est cette situation que l'on appelle communément <strong>altseason</strong>. <br> <br>
+        indiquent qu'une partie de la capitalisation du bitcoin ainsi que la nouvelle liquidité introduite dans le marché se dirigent vers les altcoins comme on a pu le voir en janvier 2018, et c'est cette situation que l'on appelle communément <strong>altseason</strong>. <br> <br>
         La visualisation identifie aussi, à l'aide de pin, les <strong>Halvings</strong> du Bitcoin, qui sont enfaite un événement sur le réseau Bitcoin réduisant de moitié la récompense attribuée au mineur qui sécurise se réseau.
         Cet événement à un impact direct sur la valorisation du Bitcoin puisque cela signifie que 2 fois moins de bitcoins seront produits à chaque fois qu'il intervient. Cela contribue donc à augmenter sa rareté et explique donc l'intérêt apporté à sa valorisation.    
-</p>
+    </p>
 </div>
